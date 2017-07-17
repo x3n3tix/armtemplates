@@ -30,7 +30,9 @@
   },
   "resources": [
     {
-      "condition": "[]",
+      "dependsOn": [
+        "[concat('Microsoft.Deployments/virtualMachines/',parameters('vmName'),'/extensions/AzureDiskEncryption')]"
+      ],
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
