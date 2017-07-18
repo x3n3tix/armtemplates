@@ -21,6 +21,12 @@
         "description": "Name of the availability set if defined"
       }
     },
+    "vmLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resources"
+      }
+    },
     "osType": {
       "defaultValue": "Windows",
       "type": "string",
@@ -182,7 +188,7 @@
       "type": "Microsoft.Network/networkInterfaces",
       "name": "[concat(parameters('vmName'),'-NIC-001')]",
       "apiVersion": "[variables('api-version')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('vmLocation')]",
       "tags": {
         "displayName": "PrivateIPAddress",
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
@@ -216,9 +222,9 @@
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[concat(parameters('vmName'))]",
       "apiVersion": "2016-04-30-preview",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('vmLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'), '-NIC-001')]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-001')]"
       ],
       "tags": {
         "displayName": "VirtualMachine",
@@ -274,12 +280,12 @@
       "resources": [
         {
           "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "type": "extensions",
           "name": "OMSExtension",
           "apiVersion": "[variables('api-version')]",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.EnterpriseCloud.Monitoring",
             "type": "MicrosoftMonitoringAgent",
@@ -295,12 +301,12 @@
         },
         {
           "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "type": "extensions",
           "name": "AzureDiskEncryption",
           "apiVersion": "2016-03-30",
-          "location": "[resourceGroup().location]",
+          "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.Azure.Security",
             "type": "AzureDiskEncryption",
@@ -329,6 +335,7 @@
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.updatevm')]",
       "apiVersion": "2015-01-01",
+      "location": "[parameters('vmLocation')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
