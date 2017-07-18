@@ -335,7 +335,6 @@
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.updatevm')]",
       "apiVersion": "2015-01-01",
-      "location": "[parameters('vmLocation')]",
       "properties": {
         "mode": "Incremental",
         "templateLink": {
@@ -343,6 +342,9 @@
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
           "vmName": {
             "value": "[parameters('vmName')]"
           },

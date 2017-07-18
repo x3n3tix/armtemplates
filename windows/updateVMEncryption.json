@@ -8,6 +8,12 @@
         "description": "Name of the Virtual Machine"
       }
     },
+    "vmLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resource" 
+      }
+    }, 
     "keyVaultResourceID": {
       "type": "string",
       "metadata": {
@@ -33,7 +39,7 @@
       "apiVersion": "2015-06-15",
       "type": "Microsoft.Compute/virtualMachines",
       "name": "[parameters('vmName')]",
-      "location": "[resourceGroup().location]",
+      "location": "[parameters('vmLocation')]",
       "properties": {
         "storageProfile": {
           "osDisk": {
