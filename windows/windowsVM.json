@@ -240,7 +240,7 @@
       "properties": {
         "licenseType": "Windows_Server",
         "hardwareProfile": {
-          "vmSize": "[parameters('vmName')[copyIndex()]['Size']]"
+          "vmSize": "[parameters('vmSize')]"
         },
 
         "storageProfile": {
