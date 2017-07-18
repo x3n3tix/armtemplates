@@ -3,16 +3,9 @@
   "contentVersion": "1.0.0.0",
   "parameters": {
     "vmName": {
-      "type": "array",
-      "metadata": {
-        "description": "Names of the VMs"
-      }
-    },
-    "osType": {
-      "defaultValue": "Windows",
       "type": "string",
       "metadata": {
-        "description": "Type of OS on the existing Image VHD"
+        "description": "Name of the VM"
       }
     },
     "vmSize": {
@@ -26,6 +19,13 @@
       "defaultValue": null,
       "metadata": {
         "description": "Name of the availability set if defined"
+      }
+    },
+    "osType": {
+      "defaultValue": "Windows",
+      "type": "string",
+      "metadata": {
+        "description": "Type of OS on the existing Image VHD"
       }
     },
     "existingVirtualNetworkName": {
@@ -333,7 +333,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/windows/updateVMEncryption.json",
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/Windows/updateVMEncryption.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
