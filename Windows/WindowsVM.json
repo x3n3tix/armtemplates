@@ -1,0 +1,356 @@
+﻿{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "array",
+      "metadata": {
+        "description": "Names of the VMs"
+      }
+    },
+    "osType": {
+      "defaultValue": "Windows",
+      "type": "string",
+      "metadata": {
+        "description": "Type of OS on the existing Image VHD"
+      }
+    },
+    "vmSize": {
+      "type": "string",
+      "metadata": {
+        "description": "Size of the VM"
+      }
+    },
+    "availabilitySet": {
+      "type": "string",
+      "defaultValue": null,
+      "metadata": {
+        "description": "Name of the availability set if defined"
+      }
+    },
+    "existingVirtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing VNET"
+      }
+    },
+    "existingVirtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing VNET resource group"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet in the virtual network you want to use"
+      }
+    },
+    "adminUserName": {
+      "type": "string"
+    },
+    "adminPassword": {
+      "type": "securestring"
+    },
+    "diagStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing Boot Diag Storage Account to use during deployment"
+      }
+    },
+    "aadClientID": {
+      "type": "string",
+      "metadata": {
+        "description": "Client ID of AAD app which has permissions to KeyVault"
+      }
+    },
+    "aadClientSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Client Secret of AAD app which has permissions to KeyVault"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the KeyVault to place the volume encryption key"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group of the KeyVault"
+      }
+    },
+    "keyEncryptionKeyURL": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
+      }
+    },
+    "volumeType": {
+      "defaultValue": "All",
+      "allowedValues": [
+        "OS",
+        "Data",
+        "All"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "Type of the volume OS or Data to perform encryption operation"
+      }
+    },
+    "sequenceVersion": {
+      "defaultValue": "1.0",
+      "type": "string",
+      "metadata": {
+        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
+      }
+    },
+    "BillingIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC charge code"
+      }
+    },
+    "ProjectIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC Project code"
+      }
+    },
+    "AvailabilityPattern": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying Availability Hours for resources"
+      }
+    },
+    "BusinessService": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying Business Service for resources"
+      }
+    },
+    "ResourceEndDate": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for indicating likley termination date of resource"
+      }
+    },
+    "BYOSoftwareLicense": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for Software Licensing requirements of resource"
+      }
+    },
+    "SupportIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for support of resources"
+      }
+    },
+    "workspaceId": {
+      "type": "string",
+      "metadata": {
+        "description": "OMS workspace ID"
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "metadata": {
+        "description": "OMS workspace name"
+      }
+    },
+    "workspaceKey": {
+      "type": "string",
+      "metadata": {
+        "description": "OMS workspace key"
+      }
+    }
+  },
+  "variables": {
+    "api-version": "2015-06-15",
+    "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
+    "diskString": ".blob.core.windows.net/vhds/",
+    "keyEncryptionAlgorithm": "RSA-OAEP",
+    "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
+    "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[concat(parameters('vmName'),'-NIC-001')]",
+      "apiVersion": "[variables('api-version')]",
+      "location": "[resourceGroup().location]",
+      "tags": {
+        "displayName": "PrivateIPAddress",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceIdentifier": "[concat(parameters('vmName'),'-NIC-001')]",
+        "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "SupportIdentifier": "[parameters('SupportIdentifier')]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[concat(parameters('vmName'))]",
+      "apiVersion": "2016-04-30-preview",
+      "location": "[resourceGroup().location]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'), '-NIC-001')]"
+      ],
+      "tags": {
+        "displayName": "VirtualMachine",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceIdentifier": "[parameters('vmName')]",
+        "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "SupportIdentifier": "[parameters('SupportIdentifier')]"
+      },
+      "properties": {
+        "licenseType": "Windows_Server",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmName')[copyIndex()]['Size']]"
+        },
+
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmName'), '-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          }
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-001'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "type": "extensions",
+          "name": "OMSExtension",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+            "type": "MicrosoftMonitoringAgent",
+            "typeHandlerVersion": "1.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "workspaceId": "[parameters('workspaceId')]"
+            },
+            "protectedSettings": {
+              "workspaceKey": "[parameters('workspaceKey')]"
+            }
+          }
+        },
+        {
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "type": "extensions",
+          "name": "AzureDiskEncryption",
+          "apiVersion": "2016-03-30",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "publisher": "Microsoft.Azure.Security",
+            "type": "AzureDiskEncryption",
+            "typeHandlerVersion": "1.1",
+            "autoUpgradeMinorVersion": true,
+            "forceUpdateTag": "[parameters('sequenceVersion')]",
+            "settings": {
+              "AADClientID": "[parameters('aadClientID')]",
+              "KeyVaultURL": "[variables('keyVaultURL')]",
+              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+              "VolumeType": "[parameters('volumeType')]",
+              "EncryptionOperation": "EnableEncryption"
+            },
+            "protectedSettings": {
+              "AADClientSecret": "[parameters('aadClientSecret')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
+      "condition": "[equals(equals(reference(resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message,''),bool('false'))]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.updatevm')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/windows/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "keyVaultResourceID": {
+            "value": "[variables('keyVaultResourceID')]"
+          },
+          "keyVaultSecretUrl": {
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
+          }
+        }
+      }
+    }
+  ]
+}
