@@ -324,7 +324,7 @@
     },
     {
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')]"
+        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/extensions/AzureDiskEncryption')]"
       ],
       "condition": "[equals(equals(reference(resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message,''),bool('false'))]",
       "type": "Microsoft.Resources/deployments",
