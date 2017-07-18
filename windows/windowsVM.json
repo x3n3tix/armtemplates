@@ -324,9 +324,8 @@
     },
     {
       "dependsOn": [
-        "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/extensions/AzureDiskEncryption')]"
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')]"
       ],
-      "condition": "[equals(equals(reference(resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message,''),bool('false'))]",
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.updatevm')]",
       "apiVersion": "2015-01-01",
