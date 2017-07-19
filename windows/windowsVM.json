@@ -186,7 +186,7 @@
   "resources": [
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('vmName'),'-NIC-001')]",
+      "name": "[concat(parameters('vmName'),'-NIC-0001')]",
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
