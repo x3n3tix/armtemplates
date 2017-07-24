@@ -343,6 +343,9 @@
           "vmName": {
             "value": "[parameters('vmName')]"
           },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
           "keyVaultResourceID": {
             "value": "[variables('keyVaultResourceID')]"
           },
