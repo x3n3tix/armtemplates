@@ -245,7 +245,10 @@
 
         "storageProfile": {
           "imageReference": {
-            "id": "/subscriptions/f390a0ea-2f11-4fe3-88e0-6454ef209a9c/resourceGroups/AZU-SYD-PD-RGP-0006/providers/Microsoft.Compute/images/ACC-Win2012R2"
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "latest"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
