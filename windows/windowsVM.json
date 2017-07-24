@@ -297,14 +297,14 @@
           }
         },
         {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/extensions/','OMSExtension')]"
+          ],
           "type": "extensions",
           "name": "AzureDiskEncryption",
           "apiVersion": "2016-03-30",
-          "location": "[resourceGroup().location]",
-          "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
-          ],
-          "condition": "[equals(reference(resourceId('Microsoft.Compute/virtualMachines/extensions',parameters('vmName'),'OMSExtension')).ProvisioningState,'Succeeded')]",
+          "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.Azure.Security",
             "type": "AzureDiskEncryption",
