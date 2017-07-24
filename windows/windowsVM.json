@@ -245,10 +245,7 @@
 
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
+            "id": "/subscriptions/f390a0ea-2f11-4fe3-88e0-6454ef209a9c/resourceGroups/AZU-SYD-PD-RGP-0006/providers/Microsoft.Compute/images/ACC-Win2012R2"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
@@ -298,7 +295,63 @@
               "workspaceKey": "[parameters('workspaceKey')]"
             }
           }
+        },
+        {
+          "type": "extensions",
+          "name": "AzureDiskEncryption",
+          "apiVersion": "2016-03-30",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions',parameters('vmName'),'OMSExtension')]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Azure.Security",
+            "type": "AzureDiskEncryption",
+            "typeHandlerVersion": "1.1",
+            "autoUpgradeMinorVersion": true,
+            "forceUpdateTag": "[parameters('sequenceVersion')]",
+            "settings": {
+              "AADClientID": "[parameters('aadClientID')]",
+              "KeyVaultURL": "[variables('keyVaultURL')]",
+              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+              "VolumeType": "[parameters('volumeType')]",
+              "EncryptionOperation": "EnableEncryption"
+            },
+            "protectedSettings": {
+              "AADClientSecret": "[parameters('aadClientSecret')]"
+            }
+          }
         }
+      ]
+    },
+    {
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.updatevm')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/windows/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "keyVaultResourceID": {
+            "value": "[variables('keyVaultResourceID')]"
+          },
+          "keyVaultSecretUrl": {
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')]"
       ]
     }
   ]
