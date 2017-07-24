@@ -302,8 +302,9 @@
           "apiVersion": "2016-03-30",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions',parameters('vmName'),'OMSExtension')]"
+            "[resourceId('Microsoft.Compute/virtualMachines',parameters('vmName'))]"
           ],
+          "condition": "[equals(reference(resourceId('Microsoft.Compute/virtualMachines/extensions',parameters('vmName'),'OMSExtension')).ProvisioningState,'Succeeded')]",
           "properties": {
             "publisher": "Microsoft.Azure.Security",
             "type": "AzureDiskEncryption",
