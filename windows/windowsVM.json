@@ -299,7 +299,7 @@
         {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/extensions/','OMSExtension')]"
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "type": "extensions",
           "name": "AzureDiskEncryption",
@@ -352,7 +352,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')]"
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
       ]
     }
   ]
