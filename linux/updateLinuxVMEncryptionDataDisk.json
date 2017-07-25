@@ -42,22 +42,24 @@
       "location": "[parameters('vmLocation')]",
       "properties": {
         "storageProfile": {
-          "dataDisks": {
-            "encryptionSettings": {
-              "diskEncryptionKey": {
-                "sourceVault": {
-                  "id": "[parameters('keyVaultResourceID')]"
+          "dataDisks": [
+            {
+              "encryptionSettings": {
+                "diskEncryptionKey": {
+                  "sourceVault": {
+                    "id": "[parameters('keyVaultResourceID')]"
+                  },
+                  "secretUrl": "[parameters('keyVaultSecretUrl')]"
                 },
-                "secretUrl": "[parameters('keyVaultSecretUrl')]"
-              },
-              "keyEncryptionKey": {
-                "sourceVault": {
-                  "id": "[parameters('keyVaultResourceID')]"
-                },
-                "keyUrl": "[parameters('keyEncryptionKeyURL')]"
+                "keyEncryptionKey": {
+                  "sourceVault": {
+                    "id": "[parameters('keyVaultResourceID')]"
+                  },
+                  "keyUrl": "[parameters('keyEncryptionKeyURL')]"
+                }
               }
             }
-          }
+          ]
         }
       }
     }
