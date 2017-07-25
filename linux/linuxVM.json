@@ -286,7 +286,7 @@
           "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-            "type": "MicrosoftMonitoringAgent",
+            "type": "OmsAgentForLinux",
             "typeHandlerVersion": "1.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
