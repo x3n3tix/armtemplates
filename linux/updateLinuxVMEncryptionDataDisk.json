@@ -42,7 +42,7 @@
       "location": "[parameters('vmLocation')]",
       "properties": {
         "storageProfile": {
-          "dataDisk": {
+          "dataDisks": {
             "encryptionSettings": {
               "diskEncryptionKey": {
                 "sourceVault": {
