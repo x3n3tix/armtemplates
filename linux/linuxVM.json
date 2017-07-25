@@ -348,7 +348,7 @@
             "value": "[variables('keyVaultResourceID')]"
           },
           "keyVaultSecretUrl": {
-            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryptionForLinux')).instanceView.statuses[0].message]"
           },
           "keyEncryptionKeyURL": {
             "value": "[parameters('keyEncryptionKeyURL')]"
@@ -356,7 +356,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryptionForLinux')]"
       ]
     }
   ]
