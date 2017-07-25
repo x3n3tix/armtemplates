@@ -308,7 +308,7 @@
           "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.Azure.Security",
-            "type": "AzureDiskEncryption",
+            "type": "AzureDiskEncryptionForLinux",
             "typeHandlerVersion": "1.1",
             "autoUpgradeMinorVersion": true,
             "forceUpdateTag": "[parameters('sequenceVersion')]",
