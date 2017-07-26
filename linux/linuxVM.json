@@ -261,7 +261,7 @@
               "name": "[concat(parameters('vmName'),'-VHD-DATADISK-',uniqueString(resourceGroup().id,deployment().name))]",
               "caching": "ReadWrite",
               "createOption": "Empty",
-              "diskSizeGB": 1023,
+              "diskSizeGB": 32,
               "managedDisk": {
                 "storageAccountType": "Standard_LRS"
               }
