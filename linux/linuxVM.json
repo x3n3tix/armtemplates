@@ -254,7 +254,19 @@
             "managedDisk": {
               "storageAccountType": "Standard_LRS"
             }
-          }
+          },
+          "dataDisks": [
+            {
+              "lun": 0,
+              "name": "[concat(parameters('vmName'),'-VHD-DATADISK-',uniqueString(resourceGroup().id,deployment().name))]",
+              "caching": "ReadWrite",
+              "createOption": "Empty",
+              "diskSizeGB": 1023,
+              "managedDisk": {
+                "storageAccountType": "Standard_LRS"
+              }
+            }
+          ] 
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
