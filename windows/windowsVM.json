@@ -289,12 +289,6 @@
           "apiVersion": "2016-04-30-preview",
           "sku": {
             "name": "Aligned"
-          },
-          "tags": {
-          },
-          "properties": {
-            "platformUpdateDomainCount": 1,
-            "platformFaultDomainCount": 1
           }
         },
         {
