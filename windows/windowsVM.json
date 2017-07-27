@@ -279,6 +279,9 @@
       },
       "resources": [
         {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
           "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
           "name": "[parameters('availabilitySet')]",
           "type": "Microsoft.Compute/availabilitySets",
