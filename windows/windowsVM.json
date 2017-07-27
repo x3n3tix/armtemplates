@@ -279,6 +279,22 @@
       },
       "resources": [
         {
+          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
+          "name": "[parameters('availabilitySet')]",
+          "type": "Microsoft.Compute/availabilitySets",
+          "location": "[parameters('vmLocation')]",
+          "apiVersion": "2016-04-30-preview",
+          "sku": {
+            "name": "Aligned"
+          },
+          "tags": {
+          },
+          "properties": {
+            "platformUpdateDomainCount": 1,
+            "platformFaultDomainCount": 1
+          }
+        },
+        {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
