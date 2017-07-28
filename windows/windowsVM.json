@@ -36,7 +36,7 @@
     },
     "osImage": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "/subscriptions/f390a0ea-2f11-4fe3-88e0-6454ef209a9c/resourceGroups/AZU-SYD-PD-RGP-0006/providers/Microsoft.Compute/images/ACC-Win2012R2",
       "metadata": {
         "description": "Link to existing OS Image to use for VM"
       }
@@ -224,131 +224,6 @@
         },
         "enableIPForwarding": false
       }
-    },
-    {
-      "condition": "[equals(parameters('osImage'),'')]",
-      "type": "Microsoft.Compute/virtualMachines",
-      "name": "[parameters('vmName')]",
-      "apiVersion": "2016-04-30-preview",
-      "location": "[parameters('vmLocation')]",
-      "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-0001')]"
-      ],
-      "tags": {
-        "displayName": "VirtualMachine",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
-        "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
-        "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
-        "SupportIdentifier": "[parameters('SupportIdentifier')]"
-      },
-      "properties": {
-        "licenseType": "Windows_Server",
-        "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
-        },
-
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            }
-          }
-        },
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
-          }
-        }
-      },
-      "resources": [
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
-          "name": "[parameters('availabilitySet')]",
-          "type": "Microsoft.Compute/availabilitySets",
-          "location": "[parameters('vmLocation')]",
-          "apiVersion": "2016-04-30-preview",
-          "sku": {
-            "name": "Aligned"
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "type": "extensions",
-          "name": "OMSExtension",
-          "apiVersion": "[variables('api-version')]",
-          "location": "[parameters('vmLocation')]",
-          "properties": {
-            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-            "type": "MicrosoftMonitoringAgent",
-            "typeHandlerVersion": "1.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "workspaceId": "[parameters('workspaceId')]"
-            },
-            "protectedSettings": {
-              "workspaceKey": "[parameters('workspaceKey')]"
-            }
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
-          ],
-          "type": "extensions",
-          "name": "AzureDiskEncryption",
-          "apiVersion": "2016-03-30",
-          "location": "[parameters('vmLocation')]",
-          "properties": {
-            "publisher": "Microsoft.Azure.Security",
-            "type": "AzureDiskEncryption",
-            "typeHandlerVersion": "1.1",
-            "autoUpgradeMinorVersion": true,
-            "forceUpdateTag": "[parameters('sequenceVersion')]",
-            "settings": {
-              "AADClientID": "[parameters('aadClientID')]",
-              "KeyVaultURL": "[variables('keyVaultURL')]",
-              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
-              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
-              "VolumeType": "[parameters('volumeType')]",
-              "EncryptionOperation": "EnableEncryption"
-            },
-            "protectedSettings": {
-              "AADClientSecret": "[parameters('aadClientSecret')]"
-            }
-          }
-        }
-      ]
     },
     {
       "type": "Microsoft.Compute/virtualMachines",
