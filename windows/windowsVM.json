@@ -343,6 +343,9 @@
       ]
     },
     {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.updatevm')]",
       "apiVersion": "2015-01-01",
@@ -369,10 +372,7 @@
             "value": "[parameters('keyEncryptionKeyURL')]"
           }
         }
-      },
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
-      ]
+      }
     }
   ]
 }
