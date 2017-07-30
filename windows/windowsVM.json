@@ -238,6 +238,9 @@
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySet'))]"
+        },
         "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
@@ -278,19 +281,6 @@
         }
       },
       "resources": [
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
-          "name": "[parameters('availabilitySet')]",
-          "type": "Microsoft.Compute/availabilitySets",
-          "location": "[parameters('vmLocation')]",
-          "apiVersion": "2016-04-30-preview",
-          "sku": {
-            "name": "Aligned"
-          }
-        },
         {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
