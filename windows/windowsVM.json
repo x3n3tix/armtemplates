@@ -242,7 +242,9 @@
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
-        "availabilitySet": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]",
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
+        },
         "storageProfile": {
           "imageReference": {
             "publisher": "MicrosoftWindowsServer",
