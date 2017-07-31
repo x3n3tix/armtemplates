@@ -181,7 +181,14 @@
     "diskString": ".blob.core.windows.net/vhds/",
     "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
-    "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]"
+    "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
+    "availabilitySetConfiguration": {
+      "[parameters('availabilitySet')]": {
+        "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('availabilitySet'))]"
+      },
+      "": {}
+    },
+    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[parameters('availabilitySet')]]"
   },
   "resources": [
     {
@@ -238,9 +245,7 @@
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets', parameters('availabilitySet'))]"
-        },
+        "availabilitySet": "[variables('availabilitySetProperties')]",
         "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
