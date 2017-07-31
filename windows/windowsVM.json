@@ -192,7 +192,7 @@
       "true": {
         "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('availabilitySet'))]"
       },
-      "false": null
+      "false": {}
     },
     "availabilitySetProperties": "[variables('availabilitySetConfiguration')[string(equals(equals(parameters('availabilitySet'),''),bool('false')))]]"
   },
