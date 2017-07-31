@@ -28,10 +28,17 @@
       }
     },
     "osType": {
-      "defaultValue": "Linux",
+      "defaultValue": "Windows",
       "type": "string",
       "metadata": {
         "description": "Type of OS on the existing Image VHD"
+      }
+    },
+    "osImage": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Link to existing OS Image to use for VM"
       }
     },
     "existingVirtualNetworkName": {
@@ -95,7 +102,7 @@
       }
     },
     "volumeType": {
-      "defaultValue": "Data",
+      "defaultValue": "All",
       "allowedValues": [
         "OS",
         "Data",
@@ -238,18 +245,14 @@
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
+        "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
-        },
+
         "storageProfile": {
           "imageReference": {
-            "publisher": "Canonical",
-            "offer": "UbuntuServer",
-            "sku": "16.04.0-LTS",
-            "version": "latest"
+            "id": "[parameters('osImage')]"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
@@ -257,19 +260,7 @@
             "managedDisk": {
               "storageAccountType": "Standard_LRS"
             }
-          },
-          "dataDisks": [
-            {
-              "lun": 0,
-              "name": "[concat(parameters('vmName'),'-VHD-DATADISK-',uniqueString(resourceGroup().id,deployment().name))]",
-              "caching": "ReadWrite",
-              "createOption": "Empty",
-              "diskSizeGB": 32,
-              "managedDisk": {
-                "storageAccountType": "Standard_LRS"
-              }
-            }
-          ]
+          }
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
@@ -295,13 +286,26 @@
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
+          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
+          "name": "[parameters('availabilitySet')]",
+          "type": "Microsoft.Compute/availabilitySets",
+          "location": "[parameters('vmLocation')]",
+          "apiVersion": "2016-04-30-preview",
+          "sku": {
+            "name": "Aligned"
+          }
+        },
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
           "type": "extensions",
           "name": "OMSExtension",
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-            "type": "OmsAgentForLinux",
+            "type": "MicrosoftMonitoringAgent",
             "typeHandlerVersion": "1.0",
             "autoUpgradeMinorVersion": true,
             "settings": {
@@ -318,13 +322,13 @@
             "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "type": "extensions",
-          "name": "AzureDiskEncryptionForLinux",
+          "name": "AzureDiskEncryption",
           "apiVersion": "2016-03-30",
           "location": "[parameters('vmLocation')]",
           "properties": {
             "publisher": "Microsoft.Azure.Security",
-            "type": "AzureDiskEncryptionForLinux",
-            "typeHandlerVersion": "0.1",
+            "type": "AzureDiskEncryption",
+            "typeHandlerVersion": "1.1",
             "autoUpgradeMinorVersion": true,
             "forceUpdateTag": "[parameters('sequenceVersion')]",
             "settings": {
@@ -341,6 +345,38 @@
           }
         }
       ]
+    },
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.updatevm')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/windows/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+          "keyVaultResourceID": {
+            "value": "[variables('keyVaultResourceID')]"
+          },
+          "keyVaultSecretUrl": {
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
+          }
+        }
+      }
     }
   ]
 }
