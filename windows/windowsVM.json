@@ -21,6 +21,12 @@
         "description": "Name of the availability set if defined"
       }
     },
+    "useAvailabilitySet": {
+      "type": "string",
+      "metadata": {
+        "description": "True if availabilitySet name is not empty."
+      } 
+    },
     "vmLocation": {
       "type": "string",
       "metadata": {
@@ -188,7 +194,7 @@
       },
       "true": {}
     },
-    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[string(equals(parameters('availabilitySet'),''))]]"
+    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[parameters('useAvailabilitySet')]]"
   },
   "resources": [
     {
@@ -245,12 +251,11 @@
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
-        "availabilitySet": "[variables('availabilitySetProperties')]",
         "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
-
+        "availabilitySet": "[variables('availabilitySetProperties')]",
         "storageProfile": {
           "imageReference": {
             "publisher": "MicrosoftWindowsServer",
