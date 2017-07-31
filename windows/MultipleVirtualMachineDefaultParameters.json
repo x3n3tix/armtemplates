@@ -1,0 +1,93 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "osType": {
+      "value": "Windows"
+    },
+    "existingVirtualNetworkName": {
+      "value": ""
+    },
+    "existingVirtualNetworkResourceGroup": {
+      "value": ""
+    },
+    "subnetName": {
+      "value": ""
+    },
+    "adminUserName": {
+      "value": ""
+    },
+    "diagStorageAccountName": {
+      "value": ""
+    },
+    "aadClientID": {
+      "value": ""
+    },
+    "keyVaultName": {
+      "value": ""
+    },
+    "keyVaultResourceGroup": {
+      "value": ""
+    },
+    "volumeType": {
+      "value": "All"
+    },
+    "sequenceVersion": {
+      "value": "1.0"
+    },
+    "BillingIdentifier": {
+      "value": ""
+    },
+    "ProjectIdentifier": {
+      "value": ""
+    },
+    "AvailabilityPattern": {
+      "value": ""
+    },
+    "BusinessService": {
+      "value": ""
+    },
+    "ResourceEndDate": {
+      "value": ""
+    },
+    "BYOSoftwareLicense": {
+      "value": ""
+    },
+    "SupportIdentifier": {
+      "value": ""
+    },
+    "workspaceName": {
+      "value": ""
+    },
+    "workspaceId": {
+      "value": ""
+    },
+    "workspaceKey": {
+      "value": ""
+    },
+    "adminPassword": {
+      "reference": {
+        "keyVault": {
+          "id": ""
+        },
+        "secretName": ""
+      }
+    },
+    "aadClientSecret": {
+      "reference": {
+        "keyVault": {
+          "id": ""
+        },
+        "secretName": ""
+      }
+    },
+    "keyEncryptionKeyURL": {
+      "value": ""
+    },
+    "virtualMachines": {
+      "value": [
+        
+      ]
+    }
+  }
+}
