@@ -188,15 +188,15 @@
     "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-    "useAvailabilitySet": {
+    "vmConfig": {
       "true": {
           "licenseType": "Windows_Server",
           "hardwareProfile": {
             "vmSize": "[parameters('vmSize')]"
           },
-          "availabilitySet": {
-            "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('availabilitySet'))]"
-          },
+        "availabilitySet": {
+          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
+        },
           "storageProfile": {
             "imageReference": {
               "publisher": "MicrosoftWindowsServer",
@@ -271,7 +271,7 @@
         }
       }
     },
-    "vmProperties": "[variables('useAvailabilitySet')[parameters('useAvailabilitySet')]]"
+    "vmProperties": "[variables('vmConfig')[parameters('useAvailabilitySet')]]"
   },
   "resources": [
     {
