@@ -183,10 +183,10 @@
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "availabilitySetConfiguration": {
-      "[equals(equals(parameters('availabilitySet'),''),bool('false'))]": {
+      "true": {
         "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('availabilitySet'))]"
       },
-      "[equals(parameters('availabilitySet'),'')]": {}
+      "false": {}
     },
     "availabilitySetProperties": "[variables('availabilitySetConfiguration')[equals(parameters('availabilitySet'),'')]]"
   },
