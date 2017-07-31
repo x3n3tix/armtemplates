@@ -188,90 +188,13 @@
     "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-    "vmConfig": {
+    "availabilitySetConfiguration": {
       "true": {
-          "licenseType": "Windows_Server",
-          "hardwareProfile": {
-            "vmSize": "[parameters('vmSize')]"
-          },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
-        },
-          "storageProfile": {
-            "imageReference": {
-              "publisher": "MicrosoftWindowsServer",
-              "offer": "WindowsServer",
-              "sku": "2012-R2-Datacenter",
-              "version": "latest"
-            },
-            "osDisk": {
-              "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-              "createOption": "FromImage",
-              "managedDisk": {
-                "storageAccountType": "Standard_LRS"
-              }
-            }
-          },
-          "osProfile": {
-            "computerName": "[parameters('vmName')]",
-            "adminUsername": "[parameters('adminUsername')]",
-            "adminPassword": "[parameters('adminPassword')]"
-          },
-          "networkProfile": {
-            "networkInterfaces": [
-              {
-                "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
-              }
-            ]
-          },
-          "diagnosticsProfile": {
-            "bootDiagnostics": {
-              "enabled": true,
-              "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
-            }
-          }
+        "id": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/availabilitySets/',parameters('availabilitySet'))]"
       },
-      "false": {
-        "licenseType": "Windows_Server",
-        "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
-        },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
-          },
-          "osDisk": {
-            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-            "createOption": "FromImage",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            }
-          }
-        },
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
-          }
-        }
-      }
+      "false": null
     },
-    "vmProperties": "[variables('vmConfig')[parameters('useAvailabilitySet')]]"
+    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[string(equals(equals(parameters('availabilitySet'),''),bool('false')))]]"
   },
   "resources": [
     {
@@ -327,7 +250,46 @@
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
-      "properties": "[variables('vmProperties')]",
+      "properties": {
+        "licenseType": "Windows_Server",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "availabilitySet": "[variables('availabilitySetProperties')]",
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "MicrosoftWindowsServer",
+            "offer": "WindowsServer",
+            "sku": "2012-R2-Datacenter",
+            "version": "latest"
+          },
+          "osDisk": {
+            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+            "createOption": "FromImage",
+            "managedDisk": {
+              "storageAccountType": "Standard_LRS"
+            }
+          }
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
+        }
+      },
       "resources": [
         {
           "dependsOn": [
