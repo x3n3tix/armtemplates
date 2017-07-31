@@ -188,7 +188,7 @@
       },
       "[equals(parameters('availabilitySet'),'')]": {}
     },
-    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[parameters('availabilitySet')]]"
+    "availabilitySetProperties": "[variables('availabilitySetConfiguration')[equals(parameters('availabilitySet'),'')]]"
   },
   "resources": [
     {
