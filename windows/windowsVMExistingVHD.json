@@ -196,7 +196,8 @@
           "createOption": "Attach",
           "managedDisk": {
             "id": "[resourceId('Microsoft.Compute/disks',parameters('existingVHDName'))]"
-          }
+          },
+          "osType": "[parameters('osType')]"
         }
       },
       "false": {
