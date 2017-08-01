@@ -40,6 +40,12 @@
         "description": "URI for existing OSDisk VHD to use for build"
       }
     },
+    "existingVHDName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of existing OSDisk VHD to use for build"
+      }
+    },
     "existingVirtualNetworkName": {
       "type": "string",
       "metadata": {
@@ -190,7 +196,7 @@
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "osDiskOptions": {
       "true": {
-        "name": "[reference(parameters('existingVHDURI')).Name]",
+        "name": "[parameters('existingVHDName')]",
         "caching": "ReadWrite",
         "createOption": "Attach",
         "managedDisk": {
