@@ -274,13 +274,7 @@
             "sku": "2012-R2-Datacenter",
             "version": "latest"
           },
-          "osDisk": {
-            "id": "[parameters('existingVHDURI')]",
-            "createOption": "Attach",
-            "managedDisk": {
-              "storageAccountType": "Standard_LRS"
-            }
-          }
+          "osDisk": "[variables('osDiskProperties')]"
         },
         "osProfile": {
           "computerName": "[parameters('vmName')]",
