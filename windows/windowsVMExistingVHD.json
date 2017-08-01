@@ -188,19 +188,42 @@
     "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
-    "osDiskOptions": {
+    "useExistingVHD": {
       "true": {
-        "osDisk": {
-          "name": "[parameters('existingVHDName')]",
-          "caching": "ReadWrite",
-          "createOption": "Attach",
-          "managedDisk": {
-            "id": "[resourceId('Microsoft.Compute/disks',parameters('existingVHDName'))]"
-          },
-          "osType": "[parameters('osType')]"
+        "licenseType": "Windows_Server",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": {
+          "osDisk": {
+            "name": "[parameters('existingVHDName')]",
+            "caching": "ReadWrite",
+            "createOption": "Attach",
+            "managedDisk": {
+              "id": "[resourceId('Microsoft.Compute/disks',parameters('existingVHDName'))]"
+            },
+            "osType": "[parameters('osType')]"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
         }
       },
       "false": {
+        "licenseType": "Windows_Server",
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
         "imageReference": {
           "publisher": "MicrosoftWindowsServer",
           "offer": "WindowsServer",
@@ -214,10 +237,28 @@
           "managedDisk": {
             "storageAccountType": "Standard_LRS"
           }
+        },
+        "osProfile": {
+          "computerName": "[parameters('vmName')]",
+          "adminUsername": "[parameters('adminUsername')]",
+          "adminPassword": "[parameters('adminPassword')]"
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
         }
       }
     },
-    "storageOptions": "[variables('osDiskOptions')[string(equals(equals(parameters('existingVHDName'),''),bool('false')))]]"
+    "vmProperties": "[variables('useExistingVHD')[string(equals(equals(parameters('existingVHDName'),''),bool('false')))]]"
   },
   "resources": [
     {
@@ -273,31 +314,7 @@
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
-      "properties": {
-        "licenseType": "Windows_Server",
-        "hardwareProfile": {
-          "vmSize": "[parameters('vmSize')]"
-        },
-        "storageProfile": "[variables('storageOptions')]",
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
-            }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
-          }
-        }
-      },
+      "properties": "[variables('vmProperties')]",
       "resources": [
         {
           "dependsOn": [
