@@ -193,14 +193,14 @@
   "resources": [
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('vmName'),'-NIC-0001')]",
+      "name": "[concat(parameters('vmName'),'-NIC-001')]",
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
         "displayName": "PrivateIPAddress",
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[concat(parameters('vmName'),'-NIC-0001')]",
+        "ResourceIdentifier": "[concat(parameters('vmName'),'-NIC-001')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
         "BusinessService": "[parameters('BusinessService')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
@@ -231,7 +231,7 @@
       "apiVersion": "2016-04-30-preview",
       "location": "[parameters('vmLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-0001')]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-001')]"
       ],
       "tags": {
         "displayName": "VirtualMachine",
@@ -270,7 +270,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-001'))]"
             }
           ]
         },
