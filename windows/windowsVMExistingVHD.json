@@ -275,8 +275,8 @@
             "version": "latest"
           },
           "osDisk": {
-            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-            "createOption": "FromImage",
+            "id": "[parameters('existingVHDURI')]",
+            "createOption": "Attach",
             "managedDisk": {
               "storageAccountType": "Standard_LRS"
             }
