@@ -206,7 +206,7 @@
         }
       }
     },
-    "osDiskProperties": "[variables('osDiskOptions')[equals(equals(parameters('existingVHDURI'),''),bool('false'))]]"
+    "osDiskProperties": "[variables('osDiskOptions')[string(equals(equals(parameters('existingVHDURI'),''),bool('false')))]]"
   },
   "resources": [
     {
