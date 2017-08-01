@@ -34,12 +34,6 @@
         "description": "Type of OS on the existing Image VHD"
       }
     },
-    "existingVHDURI": {
-      "type": "string",
-      "metadata": {
-        "description": "URI for existing OSDisk VHD to use for build"
-      }
-    },
     "existingVHDName": {
       "type": "string",
       "metadata": {
@@ -196,23 +190,33 @@
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "osDiskOptions": {
       "true": {
-        "name": "[parameters('existingVHDName')]",
-        "caching": "ReadWrite",
-        "createOption": "Attach",
-        "managedDisk": {
-          "id": "[parameters('existingVHDURI')]"
+        "osDisk": {
+          "name": "[parameters('existingVHDName')]",
+          "caching": "ReadWrite",
+          "createOption": "Attach",
+          "managedDisk": {
+            "id": "[resourceId('Microsoft.Compute/disks',parameters('existingVHDName'))]"
+          }
         }
       },
       "false": {
-        "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-        "caching": "ReadWrite",
-        "createOption": "FromImage",
-        "managedDisk": {
-          "storageAccountType": "Standard_LRS"
+        "imageReference": {
+          "publisher": "MicrosoftWindowsServer",
+          "offer": "WindowsServer",
+          "sku": "2012-R2-Datacenter",
+          "version": "latest"
+        },
+        "osDisk": {
+          "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+          "caching": "ReadWrite",
+          "createOption": "FromImage",
+          "managedDisk": {
+            "storageAccountType": "Standard_LRS"
+          }
         }
       }
     },
-    "osDiskProperties": "[variables('osDiskOptions')[string(equals(equals(parameters('existingVHDURI'),''),bool('false')))]]"
+    "storageOptions": "[variables('osDiskOptions')[string(equals(equals(parameters('existingVHDName'),''),bool('false')))]]"
   },
   "resources": [
     {
@@ -273,15 +277,7 @@
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
-        "storageProfile": {
-          "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
-          },
-          "osDisk": "[variables('osDiskProperties')]"
-        },
+        "storageProfile": "[variables('storageOptions')]",
         "osProfile": {
           "computerName": "[parameters('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
