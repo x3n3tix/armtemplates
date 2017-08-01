@@ -190,11 +190,11 @@
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "osDiskOptions": {
       "true": {
-        "id": "[parameters('existingVHDURI')]",
+        "name": "[reference(parameters('existingVHDURI')).Name]",
         "caching": "ReadWrite",
         "createOption": "Attach",
         "managedDisk": {
-          "storageAccountType": "Standard_LRS"
+          "id": "[parameters('existingVHDURI')]"
         }
       },
       "false": {
