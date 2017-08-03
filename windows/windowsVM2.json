@@ -14,13 +14,6 @@
         "description": "Size of the VM"
       }
     },
-    "availabilitySet": {
-      "type": "string",
-      "defaultValue": null,
-      "metadata": {
-        "description": "Name of the availability set if defined"
-      }
-    },
     "osType": {
       "defaultValue": "Windows",
       "type": "string",
@@ -235,9 +228,6 @@
         "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
-        },
-        "availabilitySet": {
-          "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
         },
         "storageProfile": {
           "imageReference": {
