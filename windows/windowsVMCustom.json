@@ -193,14 +193,14 @@
   "resources": [
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[concat(parameters('vmName'),'-NIC-0001')]",
+      "name": "[concat(parameters('vmName'),'-NIC-001')]",
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
         "displayName": "PrivateIPAddress",
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[concat(parameters('vmName'),'-NIC-0001')]",
+        "ResourceIdentifier": "[concat(parameters('vmName'),'-NIC-001')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
         "BusinessService": "[parameters('BusinessService')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
@@ -231,7 +231,7 @@
       "apiVersion": "2016-04-30-preview",
       "location": "[parameters('vmLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-0001')]"
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('vmName'),'-NIC-001')]"
       ],
       "tags": {
         "displayName": "VirtualMachine",
@@ -258,96 +258,98 @@
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+            "caching": "ReadWrite",
             "createOption": "FromImage",
             "managedDisk": {
               "storageAccountType": "Standard_LRS"
             }
-          }
-        },
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
-        "networkProfile": {
-          "networkInterfaces": [
-            {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-0001'))]"
+          },
+          "osProfile": {
+            "computerName": "[parameters('vmName')]",
+            "adminUsername": "[parameters('adminUsername')]",
+            "adminPassword": "[parameters('adminPassword')]"
+          },
+          "networkProfile": {
+            "networkInterfaces": [
+              {
+                "id": "[resourceId('Microsoft.Network/networkInterfaces',concat(parameters('vmName'),'-NIC-001'))]"
+              }
+            ]
+          },
+          "diagnosticsProfile": {
+            "bootDiagnostics": {
+              "enabled": true,
+              "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
             }
-          ]
-        },
-        "diagnosticsProfile": {
-          "bootDiagnostics": {
-            "enabled": true,
-            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
           }
         }
       },
-      "resources": [
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
-          "name": "[parameters('availabilitySet')]",
-          "type": "Microsoft.Compute/availabilitySets",
-          "location": "[parameters('vmLocation')]",
-          "apiVersion": "2016-04-30-preview",
-          "sku": {
-            "name": "Aligned"
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "type": "extensions",
-          "name": "OMSExtension",
-          "apiVersion": "[variables('api-version')]",
-          "location": "[parameters('vmLocation')]",
-          "properties": {
-            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-            "type": "MicrosoftMonitoringAgent",
-            "typeHandlerVersion": "1.0",
-            "autoUpgradeMinorVersion": true,
-            "settings": {
-              "workspaceId": "[parameters('workspaceId')]"
-            },
-            "protectedSettings": {
-              "workspaceKey": "[parameters('workspaceKey')]"
-            }
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
-          ],
-          "type": "extensions",
-          "name": "AzureDiskEncryption",
-          "apiVersion": "2016-03-30",
-          "location": "[parameters('vmLocation')]",
-          "properties": {
-            "publisher": "Microsoft.Azure.Security",
-            "type": "AzureDiskEncryption",
-            "typeHandlerVersion": "1.1",
-            "autoUpgradeMinorVersion": true,
-            "forceUpdateTag": "[parameters('sequenceVersion')]",
-            "settings": {
-              "AADClientID": "[parameters('aadClientID')]",
-              "KeyVaultURL": "[variables('keyVaultURL')]",
-              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
-              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
-              "VolumeType": "[parameters('volumeType')]",
-              "EncryptionOperation": "EnableEncryption"
-            },
-            "protectedSettings": {
-              "AADClientSecret": "[parameters('aadClientSecret')]"
-            }
+    "resources": [
+      {
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+        ],
+        "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
+        "name": "[parameters('availabilitySet')]",
+        "type": "Microsoft.Compute/availabilitySets",
+        "location": "[parameters('vmLocation')]",
+        "apiVersion": "2016-04-30-preview",
+        "sku": {
+          "name": "Aligned"
+        }
+      },
+      {
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+        ],
+        "type": "extensions",
+        "name": "OMSExtension",
+        "apiVersion": "[variables('api-version')]",
+        "location": "[parameters('vmLocation')]",
+        "properties": {
+          "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+          "type": "MicrosoftMonitoringAgent",
+          "typeHandlerVersion": "1.0",
+          "autoUpgradeMinorVersion": true,
+          "settings": {
+            "workspaceId": "[parameters('workspaceId')]"
+          },
+          "protectedSettings": {
+            "workspaceKey": "[parameters('workspaceKey')]"
           }
         }
-      ]
+      },
+      {
+        "dependsOn": [
+          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+          "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+        ],
+        "type": "extensions",
+        "name": "AzureDiskEncryption",
+        "apiVersion": "2016-03-30",
+        "location": "[parameters('vmLocation')]",
+        "properties": {
+          "publisher": "Microsoft.Azure.Security",
+          "type": "AzureDiskEncryption",
+          "typeHandlerVersion": "1.1",
+          "autoUpgradeMinorVersion": true,
+          "forceUpdateTag": "[parameters('sequenceVersion')]",
+          "settings": {
+            "AADClientID": "[parameters('aadClientID')]",
+            "KeyVaultURL": "[variables('keyVaultURL')]",
+            "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+            "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+            "VolumeType": "[parameters('volumeType')]",
+            "EncryptionOperation": "EnableEncryption"
+          },
+          "protectedSettings": {
+            "AADClientSecret": "[parameters('aadClientSecret')]"
+          }
+        }
+      }
+    ]
     },
+
     {
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
