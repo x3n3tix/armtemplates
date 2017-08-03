@@ -286,19 +286,6 @@
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
-          "condition": "[equals(equals(parameters('availabilitySet'),'na'),bool('false'))]",
-          "name": "[parameters('availabilitySet')]",
-          "type": "Microsoft.Compute/availabilitySets",
-          "location": "[parameters('vmLocation')]",
-          "apiVersion": "2016-04-30-preview",
-          "sku": {
-            "name": "Aligned"
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
           "type": "extensions",
           "name": "OMSExtension",
           "apiVersion": "[variables('api-version')]",
