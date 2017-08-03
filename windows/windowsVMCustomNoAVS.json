@@ -36,7 +36,6 @@
     },
     "osImage": {
       "type": "string",
-      "defaultValue": "",
       "metadata": {
         "description": "Link to existing OS Image to use for VM"
       }
