@@ -1,0 +1,1 @@
+These templates are for rebuilding VMs.

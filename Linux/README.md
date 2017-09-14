@@ -1,0 +1,1 @@
+These templates are specific for Linux-based VMs.
