@@ -374,7 +374,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/windows/updateVMEncryption.json",
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
