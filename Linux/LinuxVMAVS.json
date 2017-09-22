@@ -34,6 +34,13 @@
         "description": "Type of OS on the existing Image VHD"
       }
     },
+    "osImage": {
+      "defaultValue": "",
+      "type": "string",
+      "metadata": {
+        "description": "URI to custom image if any"
+      }
+    },
     "storageType": {
       "type": "string",
       "defaultValue": "Standard_LRS",
