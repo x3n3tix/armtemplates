@@ -266,7 +266,6 @@
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
-        "licenseType": "Windows_Server",
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
