@@ -328,7 +328,7 @@
         },
 		{
           "type": "extensions",
-          "name": "Microsoft.Insights.VMDiagnosticsSettings",
+          "name": "LinuxDiagnostic",
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
           "dependsOn": [
@@ -336,8 +336,8 @@
 			"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "properties": {
-            "publisher": "Microsoft.Azure.Diagnostics",
-            "type": "IaaSDiagnostics",
+            "publisher": "Microsoft.OSTCExtensions",
+            "type": "LinuxDiagnostic",
             "typeHandlerVersion": "2.3",
             "autoUpgradeMinorVersion": true,
             "settings": {
