@@ -84,6 +84,13 @@
         "description": "Name of the existing Boot Diag Storage Account to use during deployment"
       }
     },
+	"diagExtensionVersion": {
+      "type": "string",
+	  "defaultValue": "1.4",
+      "metadata": {
+        "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
+      }
+    },
     "aadClientID": {
       "type": "string",
       "metadata": {
@@ -354,7 +361,7 @@
           "properties": {
             "publisher": "Microsoft.Azure.Diagnostics",
             "type": "IaaSDiagnostics",
-            "typeHandlerVersion": "1.5",
+            "typeHandlerVersion": "[parameters('diagExtensionVersion')]",
             "autoUpgradeMinorVersion": true,
             "settings": {
               "xmlCfg": "[base64(variables('wadcfgx'))]",
