@@ -40,7 +40,7 @@
   },
   "resources": [
 	{
-	  "type": "[concat('Microsoft.Compute/virtualMachines/',parameters('vmName'),'/extensions')]",
+	  "type": "[concat(parameters('vmResourceId'),'/extensions')]",
 	  "name": "Microsoft.Insights.VMDiagnosticsSettings",
 	  "apiVersion": "2015-05-01-preview",
 	  "location": "[resourceGroup().location]",
