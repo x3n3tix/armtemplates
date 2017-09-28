@@ -23,6 +23,11 @@
     },
     "vmLocation": {
       "type": "string",
+	  "defaultValue": "Australia East",
+      "allowedValues": [
+        "Australia East",
+        "Australia Southeast"
+      ],
       "metadata": {
         "description": "Location of the resources"
       }
