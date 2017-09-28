@@ -44,9 +44,6 @@
 	  "name": "[concat(parameters('vmName'),'/LinuxDiagnostic')]",
 	  "apiVersion": "2015-05-01-preview",
 	  "location": "[resourceGroup().location]",
-	  "dependsOn": [
-		"[parameters('vmResourceId')]"
-	  ],
 	  "properties": {
 		"publisher": "Microsoft.OSTCExtensions",
 		"type": "LinuxDiagnostic",
