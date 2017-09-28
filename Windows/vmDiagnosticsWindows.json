@@ -34,7 +34,7 @@
     }
   },
   "variables": {
-    "wadlogs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/> <WindowsEventLog scheduledTransferPeriod=\"PT1M\" > <DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\ "/> <DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" />\" /></WindowsEventLog><PerformanceCounters scheduledTransferPeriod="PT1M">",
+    "wadlogs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/> <WindowsEventLog scheduledTransferPeriod=\"PT1M\" > <DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\ "/> <DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" />\" /></WindowsEventLog><PerformanceCounters scheduledTransferPeriod=\"PT1M\">",
     "wadmetrics": "[concat('</PerformanceCounters><Metrics resourceId=\"',parameters('vmResourceId'),'\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
     "wadcfgx": "[concat(variables('wadlogs'),parameters('wadperfcounters'),variables('wadmetrics'))]"
   },
