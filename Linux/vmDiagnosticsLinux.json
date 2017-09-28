@@ -36,7 +36,7 @@
   "variables": {
     "wadlogs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/>",
     "wadmetrics": "[concat('<Metrics resourceId=\"',parameters('vmResourceId'),'\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
-    "wadcfgx": "[concat(variables('wadlogs'),parameters('wadperfcounters'),variables('wadmetrics'))]"
+    "wadcfgx": "[concat(variables('wadlogs'),'<PerformanceCounters scheduledTransferPeriod="PT1M">',parameters('wadperfcounters'),'</PerformanceCounters>',variables('wadmetrics'))]"
   },
   "resources": [
 	{
