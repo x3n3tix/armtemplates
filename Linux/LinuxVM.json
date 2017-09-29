@@ -283,9 +283,9 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "RedHat",
-			"offer": "RHEL",
-			"sku": "7.2",
+            "publisher": "Cloudera",
+			"offer": "cloudera-centos-os",
+			"sku": "7_2",
 			"version": "latest"
           },
           "osDisk": {
