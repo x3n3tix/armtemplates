@@ -284,10 +284,10 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "Cloudera",
-			"offer": "cloudera-centos-os",
-			"sku": "7_2",
-			"version": "latest"
+            "publisher": "Canonical",
+            "offer": "UbuntuServer",
+            "sku": "16.04.0-LTS",
+            "version": "latest"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
