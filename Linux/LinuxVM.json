@@ -26,7 +26,8 @@
 	  "defaultValue": "Australia East",
       "allowedValues": [
         "Australia East",
-        "Australia Southeast"
+        "Australia Southeast",
+		"West US 2"
       ],
       "metadata": {
         "description": "Location of the resources"
