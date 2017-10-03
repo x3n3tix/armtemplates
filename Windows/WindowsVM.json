@@ -164,6 +164,18 @@
         "description": "Tags used for identifying Availability Hours for resources"
       }
     },
+	"AutoShutdownSchedule": {
+      "type": "string",
+      "metadata": {
+        "description": "Tag used for automatic shutdown and startup of VM"
+      }
+    },
+	"AutoRestartSchedule": {
+      "type": "string",
+      "metadata": {
+        "description": "Tag used for automatic restart of VM, usually for post patching"
+      }
+    },
     "BusinessService": {
       "type": "string",
       "metadata": {
@@ -267,6 +279,8 @@
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceIdentifier": "[parameters('nicName')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+		"AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
+		"AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
         "BusinessService": "[parameters('BusinessService')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
