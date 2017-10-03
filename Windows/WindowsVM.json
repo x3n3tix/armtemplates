@@ -559,7 +559,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/master/CustomScriptExtension.json?access_token=',parameters('sasToken'))]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json?access_token=',parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
