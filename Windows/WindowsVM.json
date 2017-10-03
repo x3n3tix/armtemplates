@@ -552,7 +552,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
       ],
-	  "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]"
+	  "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.customScript')]",
       "apiVersion": "2015-01-01",
