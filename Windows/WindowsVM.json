@@ -304,7 +304,7 @@
         "adminUsername": "[parameters('adminUsername')]",
         "adminPassword": "[parameters('adminPassword')]"
 	  }
-	}
+	},
 	"windowsConfig": "[variables('certUsed')[string(equals(equals(parameters('certificateUrl'),''),bool('false'))))]]"
   },
   "resources": [
