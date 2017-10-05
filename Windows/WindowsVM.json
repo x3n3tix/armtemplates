@@ -551,7 +551,8 @@
     },
 	{
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+		"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
       ],
 	  "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
       "type": "Microsoft.Resources/deployments",
