@@ -570,6 +570,12 @@
           "vmLocation": {
             "value": "[parameters('vmLocation')]"
           },
+		  "extensionPublisher": {
+			"value": "Microsoft.Compute"
+		  },
+		  "extensionVersion": {
+			"value": "1.9"
+		  },
 		  "scriptUri": {
 			"value": "[parameters('scriptUri')]"
 		  },

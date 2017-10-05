@@ -14,6 +14,18 @@
         "description": "Location of the resource" 
       }
     },
+    "extensionPublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the extension publisher" 
+      }
+    },
+    "extensionVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Version of the extension" 
+      }
+    },
 	"scriptUri": {
 	  "type": "string",
 	  "metadata": {
@@ -50,9 +62,9 @@
 	  "apiVersion": "2015-06-15",
 	  "location": "[resourceGroup().location]",
 	  "properties": {
-		"publisher": "Microsoft.Azure.Extensions",
-		"type": "CustomScript",
-		"typeHandlerVersion": "2.0",
+		"publisher": "[parameters('extensionPublisher')]",
+		"type": "CustomScriptExtension",
+		"typeHandlerVersion": "[parameters('extensionVersion')]",
 		"autoUpgradeMinorVersion": true,
 		"settings": {
 		  "fileUris": [
