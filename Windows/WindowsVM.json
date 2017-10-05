@@ -586,8 +586,11 @@
 		  "scriptParameters": {
 			"value": "[parameters('scriptParameters')]"
 		  },
-		  "sasToken": {
-			"value": "[parameters('sasToken')]"
+		  "storageAccountName": {
+		    "value": "[parameters('diagStorageAccountName')]"
+		  },
+		  "storageAccountKey": {
+		    "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
 		  }
         }
       }

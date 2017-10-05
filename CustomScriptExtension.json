@@ -45,8 +45,14 @@
 		"description": "Name of the custom script to be run."
 	  }
 	},
-	"sasToken": {
+	"storageAccountKey": {
 	  "type": "securestring",
+	  "metadata": {
+		"description": "Storage access key for accessing storage account that script is stored in"
+	  }
+	},
+	"storageAccountName": {
+	  "type": "string",
 	  "metadata": {
 		"description": "SAS Token for accessing script"
 	  }
@@ -69,9 +75,13 @@
 		"settings": {
 		  "fileUris": [
 			"[concat(parameters('scriptUri'), parameters('sasToken'))]"
-		  ],
-		  "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', parameters('scriptName'), ' ', parameters('scriptParameters'))]"
-		}
+		  ]
+		},
+		"protectedSettings": {
+            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', parameters('scriptName'), ' ', parameters('scriptParameters'))]",
+            "storageAccountName": "[parameters('storageAccountName')]",
+            "storageAccountKey": "[parameters('storageAccountKey')]"
+        }
 	  }
 	}
   ]
