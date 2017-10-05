@@ -552,7 +552,7 @@
 	{
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-		"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+		"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
       ],
 	  "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
       "type": "Microsoft.Resources/deployments",
