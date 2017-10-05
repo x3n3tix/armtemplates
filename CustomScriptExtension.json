@@ -70,7 +70,7 @@
 		  "fileUris": [
 			"[concat(parameters('scriptUri'), parameters('sasToken'))]"
 		  ],
-		  "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', './', parameters('scriptName'), ' ', parameters('scriptParameters'))]"
+		  "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', parameters('scriptName'), ' ', parameters('scriptParameters'))]"
 		}
 	  }
 	}
