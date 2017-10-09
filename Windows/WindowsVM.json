@@ -146,16 +146,16 @@
         "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
-    "BillingIdentifier": {
+	"AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
-        "description": "Tags used for identifying ACC charge code"
+        "description": "Tag used for automatic shutdown and startup of VM"
       }
     },
-    "ProjectIdentifier": {
+	"AutoRestartSchedule": {
       "type": "string",
       "metadata": {
-        "description": "Tags used for identifying ACC Project code"
+        "description": "Tag used for automatic restart of VM, usually for post patching"
       }
     },
     "AvailabilityPattern": {
@@ -164,22 +164,34 @@
         "description": "Tags used for identifying Availability Hours for resources"
       }
     },
+    "BillingIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC charge code"
+      }
+    },
     "BusinessService": {
       "type": "string",
       "metadata": {
         "description": "Tags used for identifying Business Service for resources"
       }
     },
-    "ResourceEndDate": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for indicating likley termination date of resource"
-      }
-    },
     "BYOSoftwareLicense": {
       "type": "string",
       "metadata": {
         "description": "Tags used for Software Licensing requirements of resource"
+      }
+    },
+    "ProjectIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC Project code"
+      }
+    },
+    "ResourceEndDate": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for indicating likley termination date of resource"
       }
     },
     "SupportIdentifier": {
@@ -205,7 +217,72 @@
       "metadata": {
         "description": "OMS workspace key"
       }
-    }
+    },
+	"certificateUrl": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Url of the certificate with version in KeyVault e.g. https://testault.vault.azure.net/secrets/testcert/b621es1db241e56a72d037479xab1r7"
+	  }
+	},
+	"scriptUri": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Url of the custom script to be run."
+	  }
+	},
+	"scriptName": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Name of the custom script to be run."
+	  }
+	},
+	"scriptParameters": {
+	  "type": "string",
+	  "defaultValue": "",
+	  "metadata": {
+		"description": "Name of the custom script to be run."
+	  }
+	},
+	"sasToken": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "SAS Token for accessing private source control"
+	  }
+	},
+	"scriptStorageAccountKey": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "SAS Token for accessing private source control"
+	  }
+	},
+    "osPublisher": {
+      "type": "string",
+	  "defaultValue": "MicrosoftWindowsServer",
+      "metadata": {
+        "description": "OS Publisher of Marketplace image."
+      }
+    },
+    "osOffer": {
+      "type": "string",
+	  "defaultValue": "WindowsServer",
+      "metadata": {
+        "description": "Offer of Marketplace image."
+      }
+    },
+    "osSKU": {
+      "type": "string",
+	  "defaultValue": "2012-R2-Datacenter",
+      "metadata": {
+        "description": "SKU to use for Marketplace image"
+      }
+    },
+    "osVersion": {
+      "type": "string",
+	  "defaultValue": "latest",
+      "metadata": {
+        "description": "Version to use for Marketplace image"
+      }
+    }	
   },
   "variables": {
     "api-version": "2015-06-15",
@@ -222,7 +299,47 @@
 	"wadperfcounters": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% Processor Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU utilization\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% Privileged Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU privileged time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor(_Total)\\% User Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor Information(_Total)\\Processor Frequency\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"CPU frequency\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\System\\Processes\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Processes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Process(_Total)\\Thread Count\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Threads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Process(_Total)\\Handle Count\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Handles\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\% Committed Bytes In Use\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory usage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Available Bytes\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Committed Bytes\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory committed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\Commit Limit\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory commit limit\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active time\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
 	"wadperfcounters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Read Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\% Disk Write Time\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk active write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Transfers/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Reads/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk read operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Writes/sec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk write operations\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Read Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk(_Total)\\Disk Write Bytes/sec\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write speed\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\LogicalDisk(_Total)\\% Free Space\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Disk free space (percentage)\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
 	"wadmetrics": "[concat('<Metrics resourceId=\"',variables('metricsresourceid'),'\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
-	"wadcfgx": "[concat(variables('wadlogs'),variables('wadperfcounters'),variables('wadperfcounters2'),variables('wadmetrics'))]"
+	"wadcfgx": "[concat(variables('wadlogs'),variables('wadperfcounters'),variables('wadperfcounters2'),variables('wadmetrics'))]",
+	"certUsed": {
+	  "True": {
+		"computerName": "[parameters('vmName')]",
+        "adminUsername": "[parameters('adminUsername')]",
+        "adminPassword": "[parameters('adminPassword')]",
+		"secrets": [
+		  {
+			"sourceVault": {
+			  "id": "[variables('keyVaultResourceID')]"
+			},
+			"vaultCertificates": [
+			  {
+				"certificateUrl": "[parameters('certificateUrl')]",
+				"certificateStore": "My"
+			  }
+			]
+		  }
+		],
+		"windowsConfiguration": {
+		  "provisionVMAgent": true,
+		  "winRM": {
+			"listeners": [
+			  {
+			    "protocol": "Http"
+			  },
+			  {
+			    "protocol": "Https",
+			    "certificateUrl": "[parameters('certificateUrl')]"
+			  }
+			]
+		  }
+		}
+	  },
+	  "False": {
+		"computerName": "[parameters('vmName')]",
+        "adminUsername": "[parameters('adminUsername')]",
+        "adminPassword": "[parameters('adminPassword')]"
+	  }
+	},
+	"windowsConfig": "[variables('certUsed')[string(equals(equals(parameters('certificateUrl'),''),bool('false')))]]"
   },
   "resources": [
     {
@@ -231,14 +348,14 @@
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
-        "displayName": "PrivateIPAddress",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
+        "DisplayName": "PrivateIPAddress",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -268,14 +385,16 @@
         "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
       ],
       "tags": {
-        "displayName": "VirtualMachine",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
+        "DisplayName": "VirtualMachine",
+        "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -284,10 +403,10 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
+            "publisher": "[parameters('osPublisher')]",
+            "offer": "[parameters('osOffer')]",
+            "sku": "[parameters('osSKU')]",
+            "version": "[parameters('osVersion')]"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
@@ -298,11 +417,7 @@
             }
           }
         },
-        "osProfile": {
-          "computerName": "[parameters('vmName')]",
-          "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
-        },
+        "osProfile": "[variables('windowsConfig')]",
         "networkProfile": {
           "networkInterfaces": [
             {
@@ -465,6 +580,52 @@
           "keyEncryptionKeyURL": {
             "value": "[parameters('keyEncryptionKeyURL')]"
           }
+        }
+      }
+    },
+	{
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+		"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
+	  "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.customScript')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+		  "extensionPublisher": {
+			"value": "Microsoft.Compute"
+		  },
+		  "extensionVersion": {
+			"value": "1.9"
+		  },
+		  "scriptUri": {
+			"value": "[parameters('scriptUri')]"
+		  },
+		  "scriptName": {
+			"value": "[parameters('scriptName')]"
+		  },
+		  "scriptParameters": {
+			"value": "[parameters('scriptParameters')]"
+		  },
+		  "storageAccountName": {
+		    "value": "[parameters('diagStorageAccountName')]"
+		  },
+		  "storageAccountKey": {
+		    "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
+		  }
         }
       }
     }

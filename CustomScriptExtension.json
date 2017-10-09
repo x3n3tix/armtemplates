@@ -1,0 +1,88 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "vmName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the Virtual Machine"
+      }
+    },
+    "vmLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "Location of the resource" 
+      }
+    },
+    "extensionPublisher": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the extension publisher" 
+      }
+    },
+    "extensionVersion": {
+      "type": "string",
+      "metadata": {
+        "description": "Version of the extension" 
+      }
+    },
+	"scriptUri": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Url of the custom script to be run."
+	  }
+	},
+	"scriptName": {
+	  "type": "string",
+	  "metadata": {
+		"description": "Name of the custom script to be run."
+	  }
+	},
+	"scriptParameters": {
+	  "type": "string",
+	  "defaultValue": "",
+	  "metadata": {
+		"description": "Name of the custom script to be run."
+	  }
+	},
+	"storageAccountKey": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "Storage access key for accessing storage account that script is stored in"
+	  }
+	},
+	"storageAccountName": {
+	  "type": "string",
+	  "metadata": {
+		"description": "SAS Token for accessing script"
+	  }
+	}
+  },
+  "variables": {
+	"extensionName": "CustomScriptExtension"
+  },
+  "resources": [
+    {
+	  "type": "Microsoft.Compute/virtualMachines/extensions",
+	  "name": "[concat(parameters('vmName'),'/', variables('extensionName'))]",
+	  "apiVersion": "2015-06-15",
+	  "location": "[resourceGroup().location]",
+	  "properties": {
+		"publisher": "[parameters('extensionPublisher')]",
+		"type": "CustomScriptExtension",
+		"typeHandlerVersion": "[parameters('extensionVersion')]",
+		"autoUpgradeMinorVersion": true,
+		"settings": {
+		  "fileUris": [
+			"[concat(parameters('scriptUri'), parameters('sasToken'))]"
+		  ]
+		},
+		"protectedSettings": {
+            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', parameters('scriptName'), ' ', parameters('scriptParameters'))]",
+            "storageAccountName": "[parameters('storageAccountName')]",
+            "storageAccountKey": "[parameters('storageAccountKey')]"
+        }
+	  }
+	}
+  ]
+}
