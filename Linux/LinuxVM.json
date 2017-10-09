@@ -54,9 +54,6 @@
         "description": "Storage type for VM (ie. Standard_LRS, Premium_LRS, etc.)"
       }
     },
-    "nicName": {
-      "type": "string"
-    },
     "existingVirtualNetworkName": {
       "type": "string",
       "metadata": {
@@ -73,6 +70,12 @@
       "type": "string",
       "metadata": {
         "description": "Name of the subnet in the virtual network you want to use"
+      }
+    },
+    "nicName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the NIC for the VM to be attached to"
       }
     },
     "adminUserName": {
@@ -143,16 +146,16 @@
         "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
-    "BillingIdentifier": {
+	"AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
-        "description": "Tags used for identifying ACC charge code"
+        "description": "Tag used for automatic shutdown and startup of VM"
       }
     },
-    "ProjectIdentifier": {
+	"AutoRestartSchedule": {
       "type": "string",
       "metadata": {
-        "description": "Tags used for identifying ACC Project code"
+        "description": "Tag used for automatic restart of VM, usually for post patching"
       }
     },
     "AvailabilityPattern": {
@@ -161,22 +164,34 @@
         "description": "Tags used for identifying Availability Hours for resources"
       }
     },
+    "BillingIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC charge code"
+      }
+    },
     "BusinessService": {
       "type": "string",
       "metadata": {
         "description": "Tags used for identifying Business Service for resources"
       }
     },
-    "ResourceEndDate": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for indicating likley termination date of resource"
-      }
-    },
     "BYOSoftwareLicense": {
       "type": "string",
       "metadata": {
         "description": "Tags used for Software Licensing requirements of resource"
+      }
+    },
+    "ProjectIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC Project code"
+      }
+    },
+    "ResourceEndDate": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for indicating likley termination date of resource"
       }
     },
     "SupportIdentifier": {
@@ -202,7 +217,35 @@
       "metadata": {
         "description": "OMS workspace key"
       }
-    }
+    },
+    "osPublisher": {
+      "type": "string",
+	  "defaultValue": "Redhat",
+      "metadata": {
+        "description": "OS Publisher of Marketplace image."
+      }
+    },
+    "osOffer": {
+      "type": "string",
+	  "defaultValue": "RHEL",
+      "metadata": {
+        "description": "Offer of Marketplace image."
+      }
+    },
+    "osSKU": {
+      "type": "string",
+	  "defaultValue": "7.3",
+      "metadata": {
+        "description": "SKU to use for Marketplace image"
+      }
+    },
+    "osVersion": {
+      "type": "string",
+	  "defaultValue": "latest",
+      "metadata": {
+        "description": "Version to use for Marketplace image"
+      }
+    }	
   },
   "variables": {
     "api-version": "2015-06-15",
@@ -231,14 +274,14 @@
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
-        "displayName": "PrivateIPAddress",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
+        "DisplayName": "PrivateIPAddress",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -268,14 +311,16 @@
         "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
       ],
       "tags": {
-        "displayName": "VirtualMachine",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
+        "DisplayName": "VirtualMachine",
+        "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -284,10 +329,10 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "RedHat",
-            "offer": "RHEL",
-            "sku": "7.2",
-            "version": "latest"
+            "publisher": "[parameters('osPublisher')]",
+            "offer": "[parameters('osOffer')]",
+            "sku": "[parameters('osSKU')]",
+            "version": "[parameters('osVersion')]"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",

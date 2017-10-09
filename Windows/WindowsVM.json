@@ -146,24 +146,6 @@
         "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
-    "BillingIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying ACC charge code"
-      }
-    },
-    "ProjectIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying ACC Project code"
-      }
-    },
-    "AvailabilityPattern": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying Availability Hours for resources"
-      }
-    },
 	"AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
@@ -176,22 +158,40 @@
         "description": "Tag used for automatic restart of VM, usually for post patching"
       }
     },
+    "AvailabilityPattern": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying Availability Hours for resources"
+      }
+    },
+    "BillingIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC charge code"
+      }
+    },
     "BusinessService": {
       "type": "string",
       "metadata": {
         "description": "Tags used for identifying Business Service for resources"
       }
     },
-    "ResourceEndDate": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for indicating likley termination date of resource"
-      }
-    },
     "BYOSoftwareLicense": {
       "type": "string",
       "metadata": {
         "description": "Tags used for Software Licensing requirements of resource"
+      }
+    },
+    "ProjectIdentifier": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for identifying ACC Project code"
+      }
+    },
+    "ResourceEndDate": {
+      "type": "string",
+      "metadata": {
+        "description": "Tags used for indicating likley termination date of resource"
       }
     },
     "SupportIdentifier": {
@@ -248,7 +248,41 @@
 	  "metadata": {
 		"description": "SAS Token for accessing private source control"
 	  }
-	}
+	},
+	"scriptStorageAccountKey": {
+	  "type": "securestring",
+	  "metadata": {
+		"description": "SAS Token for accessing private source control"
+	  }
+	},
+    "osPublisher": {
+      "type": "string",
+	  "defaultValue": "MicrosoftWindowsServer",
+      "metadata": {
+        "description": "OS Publisher of Marketplace image."
+      }
+    },
+    "osOffer": {
+      "type": "string",
+	  "defaultValue": "WindowsServer",
+      "metadata": {
+        "description": "Offer of Marketplace image."
+      }
+    },
+    "osSKU": {
+      "type": "string",
+	  "defaultValue": "2012-R2-Datacenter",
+      "metadata": {
+        "description": "SKU to use for Marketplace image"
+      }
+    },
+    "osVersion": {
+      "type": "string",
+	  "defaultValue": "latest",
+      "metadata": {
+        "description": "Version to use for Marketplace image"
+      }
+    }	
   },
   "variables": {
     "api-version": "2015-06-15",
@@ -314,14 +348,14 @@
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
-        "displayName": "PrivateIPAddress",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
+        "DisplayName": "PrivateIPAddress",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -351,16 +385,16 @@
         "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
       ],
       "tags": {
-        "displayName": "VirtualMachine",
-        "BillingIdentifier": "[parameters('BillingIdentifier')]",
-        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
+        "DisplayName": "VirtualMachine",
+        "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
         "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
-		"AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
-		"AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -369,10 +403,10 @@
         },
         "storageProfile": {
           "imageReference": {
-            "publisher": "MicrosoftWindowsServer",
-            "offer": "WindowsServer",
-            "sku": "2012-R2-Datacenter",
-            "version": "latest"
+            "publisher": "[parameters('osPublisher')]",
+            "offer": "[parameters('osOffer')]",
+            "sku": "[parameters('osSKU')]",
+            "version": "[parameters('osVersion')]"
           },
           "osDisk": {
             "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
@@ -561,7 +595,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json?access_token=',parameters('sasToken'))]",
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
