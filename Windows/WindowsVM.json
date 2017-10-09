@@ -349,10 +349,8 @@
       "location": "[parameters('vmLocation')]",
       "tags": {
         "DisplayName": "PrivateIPAddress",
-        "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
         "ResourceIdentifier": "[parameters('nicName')]",
