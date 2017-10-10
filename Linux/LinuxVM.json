@@ -466,6 +466,52 @@
           }
         }
       }
+    },
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+      ],
+      "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.customScript')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+          "extensionPublisher": {
+            "value": "Microsoft.Azure.Extensions"
+          },
+          "extensionVersion": {
+            "value": "2.0"
+          },
+          "scriptUri": {
+            "value": "[parameters('scriptUri')]"
+          },
+          "scriptName": {
+            "value": "[parameters('scriptName')]"
+          },
+          "scriptParameters": {
+            "value": "[parameters('scriptParameters')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "storageAccountKey": {
+            "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
+          }
+        }
+      }
     }
   ],
   "outputs": {
