@@ -1,4 +1,4 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
@@ -16,28 +16,21 @@
     },
     "availabilitySet": {
       "type": "string",
-      "defaultValue": null,
+      "defaultValue": "",
       "metadata": {
         "description": "Name of the availability set if defined"
       }
     },
     "vmLocation": {
       "type": "string",
-	  "defaultValue": "Australia East",
+      "defaultValue": "Australia East",
       "allowedValues": [
         "Australia East",
         "Australia Southeast",
-		"West US 2"
+        "West US 2"
       ],
       "metadata": {
         "description": "Location of the resources"
-      }
-    },
-    "osType": {
-      "defaultValue": "Linux",
-      "type": "string",
-      "metadata": {
-        "description": "Type of OS on the existing Image VHD"
       }
     },
     "osImage": {
@@ -90,9 +83,9 @@
         "description": "Name of the existing Boot Diag Storage Account to use during deployment"
       }
     },
-	"diagExtensionVersion": {
+    "diagExtensionVersion": {
       "type": "string",
-	  "defaultValue": "2.3",
+      "defaultValue": "2.3",
       "metadata": {
         "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
       }
@@ -146,13 +139,13 @@
         "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
-	"AutoShutdownSchedule": {
+    "AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
         "description": "Tag used for automatic shutdown and startup of VM"
       }
     },
-	"AutoRestartSchedule": {
+    "AutoRestartSchedule": {
       "type": "string",
       "metadata": {
         "description": "Tag used for automatic restart of VM, usually for post patching"
@@ -220,32 +213,32 @@
     },
     "osPublisher": {
       "type": "string",
-	  "defaultValue": "Redhat",
+      "defaultValue": "Redhat",
       "metadata": {
         "description": "OS Publisher of Marketplace image."
       }
     },
     "osOffer": {
       "type": "string",
-	  "defaultValue": "RHEL",
+      "defaultValue": "RHEL",
       "metadata": {
         "description": "Offer of Marketplace image."
       }
     },
     "osSKU": {
       "type": "string",
-	  "defaultValue": "7.3",
+      "defaultValue": "7.3",
       "metadata": {
         "description": "SKU to use for Marketplace image"
       }
     },
     "osVersion": {
       "type": "string",
-	  "defaultValue": "latest",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
-    }	
+    }
   },
   "variables": {
     "api-version": "2015-06-15",
@@ -257,15 +250,15 @@
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
-	"resourceId": "[resourceGroup().id]",
-	"accountid": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
-	"metricsresourceid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name ,'/providers/','Microsoft.Compute/virtualMachines/',parameters('vmName'))]",
-	"wadlogs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/> <WindowsEventLog scheduledTransferPeriod=\"PT1M\" > <DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" /></WindowsEventLog>",
-	"wadperfcounters": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory percentage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedByCache\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. used by cache\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Pages\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesReadPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Page reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesWrittenPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Page writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableSwap\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Swap available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableSwap\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Swap percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedSwap\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Swap used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedSwap\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Swap percent used\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
-	"wadperfcounters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIdleTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU idle time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentUserTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentNiceTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU nice time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentPrivilegedTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU privileged time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentInterruptTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU interrupt time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentDPCTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU DPC time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentProcessorTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU percentage guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIOWaitTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU IO wait time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\BytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WriteBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\TransfersPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk transfers\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
-	"wadperfcounters3": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadsPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WritesPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageReadTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageWriteTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageTransferTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk transfer time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageDiskQueueLength\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Disk queue length\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTransmitted\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network out guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesReceived\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network in guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsTransmitted\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets sent\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsReceived\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets received\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTotal\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalRxErrors\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets received errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalTxErrors\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets sent errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalCollisions\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Network collisions\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
-	"wadmetrics": "[concat('<Metrics resourceId=\"',variables('metricsresourceid'),'\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
-	"wadcfgx": "[concat(variables('wadlogs'),variables('wadperfcounters'),variables('wadperfcounters2'),variables('wadperfcounters3'),variables('wadmetrics'))]"
+    "resourceId": "[resourceGroup().id]",
+    "accountid": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
+    "metricsresourceid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name ,'/providers/','Microsoft.Compute/virtualMachines/',parameters('vmName'))]",
+    "wadlogs": "<WadCfg> <DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\" xmlns=\"http://schemas.microsoft.com/ServiceHosting/2010/10/DiagnosticsConfiguration\"> <DiagnosticInfrastructureLogs scheduledTransferLogLevelFilter=\"Error\"/> <WindowsEventLog scheduledTransferPeriod=\"PT1M\" > <DataSource name=\"Application!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"Security!*[System[(Level = 1 or Level = 2)]]\" /> <DataSource name=\"System!*[System[(Level = 1 or Level = 2)]]\" /></WindowsEventLog>",
+    "wadperfcounters": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedMemory\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Memory used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedMemory\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Memory percentage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedByCache\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Mem. used by cache\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Pages\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesReadPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Page reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesWrittenPerSec\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Page writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableSwap\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Swap available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableSwap\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Swap percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedSwap\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Swap used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedSwap\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"Swap percent used\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
+    "wadperfcounters2": "<PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIdleTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU idle time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentUserTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentNiceTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU nice time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentPrivilegedTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU privileged time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentInterruptTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU interrupt time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentDPCTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU DPC time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentProcessorTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU percentage guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIOWaitTime\" sampleRate=\"PT15S\" unit=\"Percent\"><annotation displayName=\"CPU IO wait time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\BytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WriteBytesPerSecond\" sampleRate=\"PT15S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\TransfersPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk transfers\" locale=\"en-us\"/></PerformanceCounterConfiguration>",
+    "wadperfcounters3": "<PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadsPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WritesPerSecond\" sampleRate=\"PT15S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageReadTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageWriteTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageTransferTime\" sampleRate=\"PT15S\" unit=\"Seconds\"><annotation displayName=\"Disk transfer time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageDiskQueueLength\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Disk queue length\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTransmitted\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network out guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesReceived\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network in guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsTransmitted\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets sent\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsReceived\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets received\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTotal\" sampleRate=\"PT15S\" unit=\"Bytes\"><annotation displayName=\"Network total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalRxErrors\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets received errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalTxErrors\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Packets sent errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalCollisions\" sampleRate=\"PT15S\" unit=\"Count\"><annotation displayName=\"Network collisions\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
+    "wadmetrics": "[concat('<Metrics resourceId=\"',variables('metricsresourceid'),'\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
+    "wadcfgx": "[concat(variables('wadlogs'),variables('wadperfcounters'),variables('wadperfcounters2'),variables('wadperfcounters3'),variables('wadmetrics'))]"
   },
   "resources": [
     {
@@ -382,14 +375,14 @@
             }
           }
         },
-		{
+        {
           "type": "extensions",
           "name": "LinuxDiagnostic",
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-			"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "properties": {
             "publisher": "Microsoft.OSTCExtensions",
