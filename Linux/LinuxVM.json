@@ -218,6 +218,37 @@
         "description": "OMS workspace key"
       }
     },
+    "sasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SAS Token for accessing private source control"
+      }
+    },
+    "scriptUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Url of the custom script to be run."
+      }
+    },
+    "scriptName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the custom script to be run."
+      }
+    },
+    "scriptParameters": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the custom script to be run."
+      }
+    },
+    "scriptStorageAccountKey": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SAS Token for accessing private source control"
+      }
+    },
     "osPublisher": {
       "type": "string",
       "defaultValue": "Redhat",

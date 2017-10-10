@@ -224,6 +224,12 @@
         "description": "Url of the certificate with version in KeyVault e.g. https://testault.vault.azure.net/secrets/testcert/b621es1db241e56a72d037479xab1r7"
       }
     },
+    "sasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SAS Token for accessing private source control"
+      }
+    },
     "scriptUri": {
       "type": "string",
       "metadata": {
@@ -241,12 +247,6 @@
       "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
-      }
-    },
-    "sasToken": {
-      "type": "securestring",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
       }
     },
     "scriptStorageAccountKey": {
