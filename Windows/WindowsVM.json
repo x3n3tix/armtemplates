@@ -23,7 +23,6 @@
     },
     "vmLocation": {
       "type": "string",
-      "defaultValue": "Australia East",
       "allowedValues": [
         "Australia East",
         "Australia Southeast",
@@ -158,12 +157,6 @@
         "description": "Tag used for automatic restart of VM, usually for post patching"
       }
     },
-    "AvailabilityPattern": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying Availability Hours for resources"
-      }
-    },
     "BillingIdentifier": {
       "type": "string",
       "metadata": {
@@ -288,7 +281,6 @@
     "api-version": "2015-06-15",
     "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
-    "diskString": ".blob.core.windows.net/vhds/",
     "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
@@ -339,7 +331,27 @@
         "adminPassword": "[parameters('adminPassword')]"
       }
     },
-    "windowsConfig": "[variables('certUsed')[string(equals(equals(parameters('certificateUrl'),''),bool('false')))]]"
+    "windowsConfig": "[variables('certUsed')[string(equals(equals(parameters('certificateUrl'),''),bool('false')))]]",
+    "osDiskSizeGiven": {
+      "True": {
+        "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+        "createOption": "FromImage",
+        "caching": "ReadWrite",
+        "diskSizeGB": "[parameters('osDiskSize')]",
+        "managedDisk": {
+          "storageAccountType": "[parameters('storageType')]"
+        }
+      },
+      "False": {
+        "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+        "createOption": "FromImage",
+        "caching": "ReadWrite",
+        "managedDisk": {
+          "storageAccountType": "[parameters('storageType')]"
+        }
+      }
+    },
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(equals(equals(parameters('osDiskSize'),''),bool('false')))]]"
   },
   "resources": [
     {
@@ -386,7 +398,6 @@
         "DisplayName": "VirtualMachine",
         "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
         "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
-        "AvailabilityPattern": "[parameters('AvailabilityPattern')]",
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
@@ -406,15 +417,7 @@
             "sku": "[parameters('osSKU')]",
             "version": "[parameters('osVersion')]"
           },
-          "osDisk": {
-            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-            "createOption": "FromImage",
-            "caching": "ReadWrite",
-            "diskSizeGB": "[parameters('osDiskSize')]",
-            "managedDisk": {
-              "storageAccountType": "[parameters('storageType')]"
-            }
-          }
+          "osDisk": "[variables('osDiskConfig')]"
         },
         "osProfile": "[variables('windowsConfig')]",
         "networkProfile": {
