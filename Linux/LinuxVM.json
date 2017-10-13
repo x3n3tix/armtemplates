@@ -419,6 +419,22 @@
         },
         {
           "type": "extensions",
+          "name": "NetworkWatcherAgent",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Azure.NetworkWatcher",
+            "type": "NetworkWatcherAgentLinux",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true
+          }
+        },
+        {
+          "type": "extensions",
           "name": "LinuxDiagnostic",
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
