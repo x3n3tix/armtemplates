@@ -463,8 +463,7 @@
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.NetworkWatcher",
@@ -479,8 +478,7 @@
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.Diagnostics",
@@ -501,7 +499,7 @@
         {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'NetworkWatcherAgent')]"
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'Microsoft.Insights.VMDiagnosticsSettings')]"
           ],
           "type": "extensions",
           "name": "AzureDiskEncryption",
