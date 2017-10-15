@@ -424,7 +424,8 @@
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.NetworkWatcher",
@@ -439,7 +440,8 @@
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
           ],
           "properties": {
             "publisher": "Microsoft.OSTCExtensions",
