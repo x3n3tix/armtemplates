@@ -95,7 +95,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/encryptWindowsVM.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/EncryptWindowsVM.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
