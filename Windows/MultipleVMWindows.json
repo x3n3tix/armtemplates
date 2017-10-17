@@ -98,7 +98,7 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
 >>>>>>> dev
       }
-    },
+    },c
     "aadClientID": {
       "type": "string",
       "metadata": {
