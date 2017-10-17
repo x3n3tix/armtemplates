@@ -88,7 +88,7 @@
     },
     "diagExtensionVersion": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "2.3",
       "metadata": {
         "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
       }
@@ -216,7 +216,7 @@
       "metadata": {
         "description": "SAS Token for accessing private source control"
       }
-    },c
+    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
