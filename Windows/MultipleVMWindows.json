@@ -90,7 +90,7 @@
       "type": "string",
       "defaultValue": "1.5",
       "metadata": {
-        "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
+        "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
     "aadClientID": {
