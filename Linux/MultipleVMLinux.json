@@ -216,7 +216,7 @@
       "metadata": {
         "description": "SAS Token for accessing private source control"
       }
-    },c
+    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
