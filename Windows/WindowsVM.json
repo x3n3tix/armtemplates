@@ -337,7 +337,7 @@
         "adminPassword": "[parameters('adminPassword')]"
       }
     },
-    "windowsConfig": "[variables('certUsed')[string(equals(equals(parameters('certificateUrl'),''),bool('false')))]]",
+    "windowsConfig": "[variables('certUsed')[string(not(empty(parameters('certificateUrl'))))]]",
     "osDiskSizeGiven": {
       "True": {
         "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
@@ -357,7 +357,7 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(equals(equals(parameters('osDiskSize'),''),bool('false')))]]",
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]",
     "dataDisksUsed": {
       "True": {
         "imageReference": {
@@ -394,7 +394,7 @@
         "osDisk": "[variables('osDiskConfig')]"
       }
     },
-    "storageConfig": "[variables('dataDisksUsed')[string(greater(length(parameters('attachedDataDisks')),0))]]"
+    "storageConfig": "[variables('dataDisksUsed')[string(not(empty(parameters('attachedDataDisks'))))]]"
   },
   "resources": [
     {
