@@ -474,7 +474,7 @@
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
-          "condition": "[greater(parameters('workspaceId'),6)]",
+          "condition": "[greater(length(parameters('workspaceId')),6)]",
           "type": "extensions",
           "name": "OMSExtension",
           "apiVersion": "[variables('api-version')]",
