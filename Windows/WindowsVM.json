@@ -394,7 +394,7 @@
         "osDisk": "[variables('osDiskConfig')]"
       }
     },
-    "storageConfig": "[variables('dataDisksUsed')[string(greater(length(string(parameters('attachedDataDisks'))),2))]]"
+    "storageConfig": "[variables('dataDisksUsed')[string(greater(length(parameters('attachedDataDisks')),0))]]"
   },
   "resources": [
     {
