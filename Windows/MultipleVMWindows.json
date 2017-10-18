@@ -333,8 +333,8 @@
           "availabilitySet": {
             "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
           },
-          "dataDisks": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['DataDisks']]"
+          "attachedDataDisks": {
+            "value": "[parameters('virtualMachines')[copyIndex()]['AttachedDataDisks']]"
           },
           "vmLocation": {
             "value": "[parameters('vmLocation')]"

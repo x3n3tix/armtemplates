@@ -21,7 +21,7 @@
         "description": "Name of the availability set if defined"
       }
     },
-    "dataDisks": {
+    "attachedDataDisks": {
       "type": "array",
       "metadata": {
         "description": "Array of datadisks to add to VM at deployment (ie, [512,2048] would add 2 datadisks, 1 at 512GB and 1 at 2TB )"
@@ -372,9 +372,9 @@
             "name": "dataDisks",
             "count": "[length(parameters('dataDisks'))]",
             "input": {
-              "lun": "[copyIndex()]",
-              "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex())]",
-              "diskSizeGB": "[parameters('dataDisks')[copyIndex()]]",
+              "lun": "[copyIndex('dataDisks')]",
+              "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
+              "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')]]",
               "createOption": "Empty",
               "caching": "ReadWrite",
               "managedDisk": {
