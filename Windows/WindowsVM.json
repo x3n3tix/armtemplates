@@ -391,7 +391,7 @@
           "sku": "[parameters('osSKU')]",
           "version": "[parameters('osVersion')]"
         },
-        "osDisk": "[variables('osDiskConfig')]",
+        "osDisk": "[variables('osDiskConfig')]"
       }
     },
     "storageConfig": "[variables('dataDisksUsed')[string(greater(length(parameters('attachedDataDisks')),0))]]"
