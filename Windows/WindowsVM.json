@@ -358,16 +358,23 @@
       }
     },
     "osDiskConfig": "[variables('osDiskSizeGiven')[string(equals(equals(parameters('osDiskSize'),''),bool('false')))]]",
-    "dataDisks": {
+    "dataDisksUsed": {
       "True": {
+        "imageReference": {
+          "publisher": "[parameters('osPublisher')]",
+          "offer": "[parameters('osOffer')]",
+          "sku": "[parameters('osSKU')]",
+          "version": "[parameters('osVersion')]"
+        },
+        "osDisk": "[variables('osDiskConfig')]",
         "copy": [
           {
-            "name": "dataDiskCopy",
+            "name": "dataDisks",
             "count": "[length(parameters('dataDisks'))]",
             "input": {
               "lun": "[copyIndex()]",
-              "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDiskCopy'))]",
-              "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDiskCopy')]]",
+              "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
+              "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')]]",
               "createOption": "Empty",
               "caching": "ReadWrite",
               "managedDisk": {
@@ -377,69 +384,7 @@
           }
         ]
       },
-      "False": {}
-    },
-    "dataDiskConfig": "[variables('dataDisks')[string(greater(length(parameters('dataDisks')),0))]]"
-  }
-},
-"resources": [
-  {
-    "type": "Microsoft.Network/networkInterfaces",
-    "name": "[parameters('nicName')]",
-    "apiVersion": "[variables('api-version')]",
-    "location": "[parameters('vmLocation')]",
-    "tags": {
-      "DisplayName": "PrivateIPAddress",
-      "BillingIdentifier": "[parameters('BillingIdentifier')]",
-      "BusinessService": "[parameters('BusinessService')]",
-      "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-      "ResourceEndDate": "[parameters('ResourceEndDate')]",
-      "ResourceIdentifier": "[parameters('nicName')]",
-      "SupportIdentifier": "[parameters('SupportIdentifier')]"
-    },
-    "properties": {
-      "ipConfigurations": [
-        {
-          "name": "ipconfig1",
-          "properties": {
-            "privateIPAllocationMethod": "Dynamic",
-            "subnet": {
-              "id": "[variables('subnetRef')]"
-            }
-          }
-        }
-      ],
-      "dnsSettings": {
-        "dnsServers": []
-      },
-      "enableIPForwarding": false
-    }
-  },
-  {
-    "type": "Microsoft.Compute/virtualMachines",
-    "name": "[parameters('vmName')]",
-    "apiVersion": "2016-04-30-preview",
-    "location": "[parameters('vmLocation')]",
-    "dependsOn": [
-      "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
-    ],
-    "tags": {
-      "DisplayName": "VirtualMachine",
-      "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
-      "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
-      "BillingIdentifier": "[parameters('BillingIdentifier')]",
-      "BusinessService": "[parameters('BusinessService')]",
-      "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
-      "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
-      "ResourceEndDate": "[parameters('ResourceEndDate')]",
-      "ResourceIdentifier": "[parameters('vmName')]",
-      "SupportIdentifier": "[parameters('SupportIdentifier')]"
-    },
-    "properties": {
-      "hardwareProfile": {
-        "vmSize": "[parameters('vmSize')]"
-      },
-      "storageProfile": {
+      "False": {
         "imageReference": {
           "publisher": "[parameters('osPublisher')]",
           "offer": "[parameters('osOffer')]",
@@ -447,220 +392,280 @@
           "version": "[parameters('osVersion')]"
         },
         "osDisk": "[variables('osDiskConfig')]",
-        "dataDisks": "[variables('dataDiskConfig')]"
+      }
+    },
+    "storageConfig": "[variables('dataDisksUsed')[string(greater(length(parameters('dataDisks')),0))]]"
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[parameters('nicName')]",
+      "apiVersion": "[variables('api-version')]",
+      "location": "[parameters('vmLocation')]",
+      "tags": {
+        "DisplayName": "PrivateIPAddress",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('nicName')]",
+        "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
-      "osProfile": "[variables('windowsConfig')]",
-      "networkProfile": {
-        "networkInterfaces": [
+      "properties": {
+        "ipConfigurations": [
           {
-            "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
           }
-        ]
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('vmName')]",
+      "apiVersion": "2016-04-30-preview",
+      "location": "[parameters('vmLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
+      ],
+      "tags": {
+        "DisplayName": "VirtualMachine",
+        "AutoShutdownSchedule": "[parameters('AutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('AutoRestartSchedule')]",
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
+        "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
+        "ResourceEndDate": "[parameters('ResourceEndDate')]",
+        "ResourceIdentifier": "[parameters('vmName')]",
+        "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
-      "diagnosticsProfile": {
-        "bootDiagnostics": {
-          "enabled": true,
-          "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('vmSize')]"
+        },
+        "storageProfile": "[variables('storageConfig')]",
+        "osProfile": "[variables('windowsConfig')]",
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+          ],
+          "condition": "[greater(parameters('workspaceId'),6)]",
+          "type": "extensions",
+          "name": "OMSExtension",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "properties": {
+            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+            "type": "MicrosoftMonitoringAgent",
+            "typeHandlerVersion": "1.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "workspaceId": "[parameters('workspaceId')]"
+            },
+            "protectedSettings": {
+              "workspaceKey": "[parameters('workspaceKey')]"
+            }
+          }
+        },
+        {
+          "type": "extensions",
+          "name": "NetworkWatcherAgent",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Azure.NetworkWatcher",
+            "type": "NetworkWatcherAgentWindows",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true
+          }
+        },
+        {
+          "type": "extensions",
+          "name": "Microsoft.Insights.VMDiagnosticsSettings",
+          "apiVersion": "2015-05-01-preview",
+          "location": "[resourceGroup().location]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Azure.Diagnostics",
+            "type": "IaaSDiagnostics",
+            "typeHandlerVersion": "[parameters('diagExtensionVersion')]",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "xmlCfg": "[base64(variables('wadcfgx'))]",
+              "StorageAccount": "[parameters('diagStorageAccountName')]"
+            },
+            "protectedSettings": {
+              "storageAccountName": "[parameters('diagStorageAccountName')]",
+              "storageAccountKey": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]",
+              "storageAccountEndPoint": "https://core.windows.net/"
+            }
+          }
+        },
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'NetworkWatcherAgent')]"
+          ],
+          "type": "extensions",
+          "name": "AzureDiskEncryption",
+          "apiVersion": "2016-03-30",
+          "location": "[parameters('vmLocation')]",
+          "properties": {
+            "publisher": "Microsoft.Azure.Security",
+            "type": "AzureDiskEncryption",
+            "typeHandlerVersion": "1.1",
+            "autoUpgradeMinorVersion": true,
+            "forceUpdateTag": "[parameters('sequenceVersion')]",
+            "settings": {
+              "AADClientID": "[parameters('aadClientID')]",
+              "KeyVaultURL": "[variables('keyVaultURL')]",
+              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+              "VolumeType": "[parameters('volumeType')]",
+              "EncryptionOperation": "EnableEncryption"
+            },
+            "protectedSettings": {
+              "AADClientSecret": "[parameters('aadClientSecret')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
+      ],
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.updateNIC')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateNIC.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "nicName": {
+            "value": "[parameters('nicName')]"
+          },
+          "SubnetRef": {
+            "value": "[variables('subnetRef')]"
+          },
+          "privateIp": {
+            "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', parameters('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
+          }
         }
       }
     },
-    "resources": [
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-        ],
-        "condition": "[greater(parameters('workspaceId'),6)]",
-        "type": "extensions",
-        "name": "OMSExtension",
-        "apiVersion": "[variables('api-version')]",
-        "location": "[parameters('vmLocation')]",
-        "properties": {
-          "publisher": "Microsoft.EnterpriseCloud.Monitoring",
-          "type": "MicrosoftMonitoringAgent",
-          "typeHandlerVersion": "1.0",
-          "autoUpgradeMinorVersion": true,
-          "settings": {
-            "workspaceId": "[parameters('workspaceId')]"
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.updatevm')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
           },
-          "protectedSettings": {
-            "workspaceKey": "[parameters('workspaceKey')]"
-          }
-        }
-      },
-      {
-        "type": "extensions",
-        "name": "NetworkWatcherAgent",
-        "apiVersion": "[variables('api-version')]",
-        "location": "[parameters('vmLocation')]",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-          "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
-        ],
-        "properties": {
-          "publisher": "Microsoft.Azure.NetworkWatcher",
-          "type": "NetworkWatcherAgentWindows",
-          "typeHandlerVersion": "1.4",
-          "autoUpgradeMinorVersion": true
-        }
-      },
-      {
-        "type": "extensions",
-        "name": "Microsoft.Insights.VMDiagnosticsSettings",
-        "apiVersion": "2015-05-01-preview",
-        "location": "[resourceGroup().location]",
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-          "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
-        ],
-        "properties": {
-          "publisher": "Microsoft.Azure.Diagnostics",
-          "type": "IaaSDiagnostics",
-          "typeHandlerVersion": "[parameters('diagExtensionVersion')]",
-          "autoUpgradeMinorVersion": true,
-          "settings": {
-            "xmlCfg": "[base64(variables('wadcfgx'))]",
-            "StorageAccount": "[parameters('diagStorageAccountName')]"
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
           },
-          "protectedSettings": {
-            "storageAccountName": "[parameters('diagStorageAccountName')]",
-            "storageAccountKey": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]",
-            "storageAccountEndPoint": "https://core.windows.net/"
-          }
-        }
-      },
-      {
-        "dependsOn": [
-          "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-          "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'NetworkWatcherAgent')]"
-        ],
-        "type": "extensions",
-        "name": "AzureDiskEncryption",
-        "apiVersion": "2016-03-30",
-        "location": "[parameters('vmLocation')]",
-        "properties": {
-          "publisher": "Microsoft.Azure.Security",
-          "type": "AzureDiskEncryption",
-          "typeHandlerVersion": "1.1",
-          "autoUpgradeMinorVersion": true,
-          "forceUpdateTag": "[parameters('sequenceVersion')]",
-          "settings": {
-            "AADClientID": "[parameters('aadClientID')]",
-            "KeyVaultURL": "[variables('keyVaultURL')]",
-            "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
-            "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
-            "VolumeType": "[parameters('volumeType')]",
-            "EncryptionOperation": "EnableEncryption"
+          "keyVaultResourceID": {
+            "value": "[variables('keyVaultResourceID')]"
           },
-          "protectedSettings": {
-            "AADClientSecret": "[parameters('aadClientSecret')]"
+          "keyVaultSecretUrl": {
+            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
           }
         }
       }
-    ]
-  },
-  {
-    "dependsOn": [
-      "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-    ],
-    "type": "Microsoft.Resources/deployments",
-    "name": "[concat(parameters('vmName'),'.updateNIC')]",
-    "apiVersion": "2015-01-01",
-    "properties": {
-      "mode": "Incremental",
-      "templateLink": {
-        "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateNIC.json",
-        "contentVersion": "1.0.0.0"
-      },
-      "parameters": {
-        "nicName": {
-          "value": "[parameters('nicName')]"
+    },
+    {
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+      ],
+      "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
+      "type": "Microsoft.Resources/deployments",
+      "name": "[concat(parameters('vmName'),'.customScript')]",
+      "apiVersion": "2015-01-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json",
+          "contentVersion": "1.0.0.0"
         },
-        "SubnetRef": {
-          "value": "[variables('subnetRef')]"
-        },
-        "privateIp": {
-          "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', parameters('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+          "extensionPublisher": {
+            "value": "Microsoft.Compute"
+          },
+          "extensionVersion": {
+            "value": "1.9"
+          },
+          "scriptUri": {
+            "value": "[parameters('scriptUri')]"
+          },
+          "scriptName": {
+            "value": "[parameters('scriptName')]"
+          },
+          "scriptParameters": {
+            "value": "[parameters('scriptParameters')]"
+          },
+          "storageAccountName": {
+            "value": "[parameters('diagStorageAccountName')]"
+          },
+          "storageAccountKey": {
+            "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
+          }
         }
       }
     }
-  },
-  {
-    "dependsOn": [
-      "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
-    ],
-    "type": "Microsoft.Resources/deployments",
-    "name": "[concat(parameters('vmName'),'.updatevm')]",
-    "apiVersion": "2015-01-01",
-    "properties": {
-      "mode": "Incremental",
-      "templateLink": {
-        "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
-        "contentVersion": "1.0.0.0"
-      },
-      "parameters": {
-        "vmName": {
-          "value": "[parameters('vmName')]"
-        },
-        "vmLocation": {
-          "value": "[parameters('vmLocation')]"
-        },
-        "keyVaultResourceID": {
-          "value": "[variables('keyVaultResourceID')]"
-        },
-        "keyVaultSecretUrl": {
-          "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
-        },
-        "keyEncryptionKeyURL": {
-          "value": "[parameters('keyEncryptionKeyURL')]"
-        }
-      }
-    }
-  },
-  {
-    "dependsOn": [
-      "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-      "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
-    ],
-    "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
-    "type": "Microsoft.Resources/deployments",
-    "name": "[concat(parameters('vmName'),'.customScript')]",
-    "apiVersion": "2015-01-01",
-    "properties": {
-      "mode": "Incremental",
-      "templateLink": {
-        "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/CustomScriptExtension.json",
-        "contentVersion": "1.0.0.0"
-      },
-      "parameters": {
-        "vmName": {
-          "value": "[parameters('vmName')]"
-        },
-        "vmLocation": {
-          "value": "[parameters('vmLocation')]"
-        },
-        "extensionPublisher": {
-          "value": "Microsoft.Compute"
-        },
-        "extensionVersion": {
-          "value": "1.9"
-        },
-        "scriptUri": {
-          "value": "[parameters('scriptUri')]"
-        },
-        "scriptName": {
-          "value": "[parameters('scriptName')]"
-        },
-        "scriptParameters": {
-          "value": "[parameters('scriptParameters')]"
-        },
-        "storageAccountName": {
-          "value": "[parameters('diagStorageAccountName')]"
-        },
-        "storageAccountKey": {
-          "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
-        }
-      }
-    }
-  }
-]
+  ]
 }
