@@ -370,7 +370,7 @@
         "copy": [
           {
             "name": "dataDisks",
-            "count": "[length(parameters())]",
+            "count": "[length(parameters('dataDisks'))]",
             "input": {
               "lun": "[copyIndex()]",
               "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex())]",
