@@ -464,7 +464,7 @@
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
           "dependsOn":[
-            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties":{
             "publisher":"Microsoft.Compute",
