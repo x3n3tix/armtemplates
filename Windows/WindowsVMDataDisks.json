@@ -357,8 +357,7 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]",
-    "initialiseDisksScript": "https://smm001templates.blob.core.windows.net/templates/InitialiseDataDisks.ps1"
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]"
   },
   "resources": [
     {
@@ -472,9 +471,9 @@
             "typeHandlerVersion":"1.9",
             "settings":{
               "fileUris":[
-                "[variables('initialiseDisksScript')]"
+                "https://smm001templates.blob.core.windows.net/templates/InitialiseDataDisks.ps1"
               ],
-              "commandToExecute":"[concat('powershell -ExecutionPolicy Unrestricted -file InitialiseDataDisks.ps1'))]"
+              "commandToExecute":"powershell -ExecutionPolicy Unrestricted -file InitialiseDataDisks.ps1"
             }
           }
         },
