@@ -459,7 +459,7 @@
       },
       "resources": [
         {
-          "type":"Microsoft.Compute/virtualMachines/extensions",
+          "type":"extensions",
           "name":"InitialiseDisks",
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
