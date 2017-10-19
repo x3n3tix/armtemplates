@@ -324,7 +324,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('useAvailabilitySet')[string(not(empty(parameters('virtualMachines')[copyIndex()]['availabilitySet'])))],variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['attachedDataDisks'][0])))],'.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('useAvailabilitySet')[string(not(empty(parameters('virtualMachines')[copyIndex()]['availabilitySet'])))],variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['attachedDataDisks'])))],'.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
