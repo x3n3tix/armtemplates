@@ -357,7 +357,8 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]"
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]",
+    "initialiseDisksScript": "https://smm001templates.blob.core.windows.net/templates/InitialiseDataDisks.ps1"
   },
   "resources": [
     {
@@ -457,6 +458,26 @@
         }
       },
       "resources": [
+        {
+          "type":"Microsoft.Compute/virtualMachines/extensions",
+          "name":"InitialiseDisks",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "dependsOn":[
+            "[concat('Microsoft.Compute/virtualMachines/', variables('vmName'))]"
+          ],
+          "properties":{
+            "publisher":"Microsoft.Compute",
+            "type":"CustomScriptExtension",
+            "typeHandlerVersion":"1.9",
+            "settings":{
+              "fileUris":[
+                "[variables('initialiseDisksScript')]"
+              ],
+              "commandToExecute":"[concat('powershell -ExecutionPolicy Unrestricted -file InitialiseDataDisks.ps1'))]"
+            }
+          }
+        },
         {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
