@@ -242,11 +242,11 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "scriptParameters": {
+    "scriptCommand": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Name of the custom script to be run."
+        "description": "Command to run with custom script"
       }
     },
     "scriptStorageAccountKey": {
@@ -358,7 +358,10 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]"
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]",
+    "availabilitySet": {
+      "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('availabilitySet'))]"
+    }
   },
   "resources": [
     {
@@ -417,6 +420,7 @@
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
+        "availabilitySet": "[if(not(empty(parameters('availabilitySet'))), variables('availabilitySet'), json('null'))]",
         "storageProfile": {
           "imageReference": {
             "publisher": "[parameters('osPublisher')]",
@@ -598,7 +602,7 @@
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
         "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
       ],
-      "condition": "[equals(equals(parameters('scriptUri'),''),bool('false'))]",
+      "condition": "[not(empty(parameters('scriptUri')))]",
       "type": "Microsoft.Resources/deployments",
       "name": "[concat(parameters('vmName'),'.customScript')]",
       "apiVersion": "2015-01-01",
@@ -627,14 +631,8 @@
           "scriptName": {
             "value": "[parameters('scriptName')]"
           },
-          "scriptParameters": {
-            "value": "[parameters('scriptParameters')]"
-          },
-          "storageAccountName": {
-            "value": "[parameters('diagStorageAccountName')]"
-          },
-          "storageAccountKey": {
-            "value": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]"
+          "scriptCommand": {
+            "value": "[parameters('scriptCommand')]"
           }
         }
       }

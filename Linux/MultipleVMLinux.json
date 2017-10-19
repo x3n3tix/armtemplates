@@ -231,7 +231,7 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "scriptParameters": {
+    "scriptCommand": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
@@ -418,8 +418,8 @@
           "scriptName": {
             "value": "[parameters('scriptName')]"
           },
-          "scriptParameters": {
-            "value": "[parameters('scriptParameters')]"
+          "scriptCommand": {
+            "value": "[parameters('scriptCommand')]"
           },
           "scriptStorageAccountKey": {
             "value": "[parameters('scriptStorageAccountKey')]"

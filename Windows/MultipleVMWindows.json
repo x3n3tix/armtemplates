@@ -239,7 +239,7 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "scriptParameters": {
+    "scriptCommand": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
@@ -324,7 +324,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('useAvailabilitySet')[string(not(empty(parameters('virtualMachines')[copyIndex()]['availabilitySet'])))],variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -436,8 +436,8 @@
           "scriptName": {
             "value": "[parameters('scriptName')]"
           },
-          "scriptParameters": {
-            "value": "[parameters('scriptParameters')]"
+          "scriptCommand": {
+            "value": "[parameters('scriptCommand')]"
           },
           "scriptStorageAccountKey": {
             "value": "[parameters('scriptStorageAccountKey')]"
