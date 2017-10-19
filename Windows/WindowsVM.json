@@ -358,44 +358,7 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]",
-    "dataDisksUsed": {
-      "True": {
-        "imageReference": {
-          "publisher": "[parameters('osPublisher')]",
-          "offer": "[parameters('osOffer')]",
-          "sku": "[parameters('osSKU')]",
-          "version": "[parameters('osVersion')]"
-        },
-        "osDisk": "[variables('osDiskConfig')]",
-        "copy": [
-          {
-            "name": "dataDisks",
-            "count": "[length(parameters('attachedDataDisks'))]",
-            "input": {
-              "lun": "[copyIndex('dataDisks')]",
-              "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-              "diskSizeGB": "[parameters('attachedDataDisks')[copyIndex('dataDisks')]]",
-              "createOption": "Empty",
-              "caching": "ReadWrite",
-              "managedDisk": {
-                "storageAccountType": "[parameters('storageType')]"
-              }
-            }
-          }
-        ]
-      },
-      "False": {
-        "imageReference": {
-          "publisher": "[parameters('osPublisher')]",
-          "offer": "[parameters('osOffer')]",
-          "sku": "[parameters('osSKU')]",
-          "version": "[parameters('osVersion')]"
-        },
-        "osDisk": "[variables('osDiskConfig')]"
-      }
-    },
-    "storageConfig": "[variables('dataDisksUsed')[string(not(empty(parameters('attachedDataDisks'))))]]"
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]"
   },
   "resources": [
     {
@@ -454,7 +417,15 @@
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
-        "storageProfile": "[variables('storageConfig')]",
+        "storageProfile": {
+          "imageReference": {
+            "publisher": "[parameters('osPublisher')]",
+            "offer": "[parameters('osOffer')]",
+            "sku": "[parameters('osSKU')]",
+            "version": "[parameters('osVersion')]"
+          },
+          "osDisk": "[variables('osDiskConfig')]"
+        },
         "osProfile": "[variables('windowsConfig')]",
         "networkProfile": {
           "networkInterfaces": [
