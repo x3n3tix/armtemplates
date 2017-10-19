@@ -369,6 +369,7 @@
         "osDisk": "[variables('osDiskConfig')]",
         "copy": [
           {
+            "condition": "[greater(length(parameters('attachedDataDisks')[0]),1)]",
             "name": "dataDisks",
             "count": "[length(parameters('attachedDataDisks'))]",
             "input": {
@@ -394,7 +395,7 @@
         "osDisk": "[variables('osDiskConfig')]"
       }
     },
-    "storageConfig": "[variables('dataDisksUsed')[string(equals(equals(parameters('attachedDataDisks')[0],' '),bool('false')))]]"
+    "storageConfig": "[variables('dataDisksUsed')[string(equals(equals(parameters('attachedDataDisks')[0],''),bool('false')))]]"
   },
   "resources": [
     {
