@@ -304,7 +304,11 @@
       "True": "[length(parameters('virtualMachines'))]",
       "False": "[parameters('batchSize')]"
     },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]"
+    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]",
+    "dataDisksUsed": {
+      "True": "DataDisks",
+      "False": ""
+    }
   },
   "resources": [
     {
@@ -320,7 +324,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('useAvailabilitySet')[string(equals(equals(parameters('virtualMachines')[copyIndex()]['AvailabilitySet'],''),bool('false')))],'.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('osImageRef'),variables('useAvailabilitySet')[string(not(empty(parameters('virtualMachines')[copyIndex()]['availabilitySet'])))],variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['attachedDataDisks'][0])))],'.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
