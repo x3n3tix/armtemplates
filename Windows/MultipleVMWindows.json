@@ -288,8 +288,8 @@
         "description": "Version to use for Marketplace image"
       }
     },
-    "gitStorageAccessKey": {
-      "type": "string"
+    "sasToken": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -314,7 +314,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])), 'DataDisks', ''),'.json',parameters('gitStorageAccessKey'))]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])), 'DataDisks', ''),'.json',parameters('sasToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -351,8 +351,8 @@
           "subnetName": {
             "value": "[parameters('subnetName')]"
           },
-          "nicName": {
-            "value": "[concat(parameters('virtualMachines')[copyIndex()]['Name'],'-NIC-',parameters('nicSuffix'))]"
+          "nicSuffix": {
+            "value": "[parameters('nicSuffix')]"
           },
           "adminUserName": {
             "value": "[parameters('adminUserName')]"
@@ -428,9 +428,6 @@
           },
           "scriptCommand": {
             "value": "[parameters('scriptCommand')]"
-          },
-          "scriptStorageAccountKey": {
-            "value": "[parameters('scriptStorageAccountKey')]"
           },
           "sasToken": {
             "value": "[parameters('sasToken')]"
