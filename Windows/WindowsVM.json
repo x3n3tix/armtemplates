@@ -32,8 +32,11 @@
       "type": "string",
       "allowedValues": [
         "Australia East",
+        "australiaeast",
         "Australia Southeast",
-        "West US 2"
+        "australiasoutheast",
+        "West US 2",
+        "westus2"
       ],
       "metadata": {
         "description": "Location of the resources"
