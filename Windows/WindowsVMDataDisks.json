@@ -338,27 +338,7 @@
         "adminPassword": "[parameters('adminPassword')]"
       }
     },
-    "windowsConfig": "[variables('certUsed')[string(not(empty(parameters('certificateUrl'))))]]",
-    "osDiskSizeGiven": {
-      "True": {
-        "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-        "createOption": "FromImage",
-        "caching": "ReadWrite",
-        "diskSizeGB": "[parameters('osDiskSize')]",
-        "managedDisk": {
-          "storageAccountType": "[parameters('storageType')]"
-        }
-      },
-      "False": {
-        "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
-        "createOption": "FromImage",
-        "caching": "ReadWrite",
-        "managedDisk": {
-          "storageAccountType": "[parameters('storageType')]"
-        }
-      }
-    },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(not(empty(parameters('osDiskSize'))))]]"
+    "windowsConfig": "[variables('certUsed')[string(not(empty(parameters('certificateUrl'))))]]"
   },
   "resources": [
     {
@@ -372,7 +352,6 @@
         "BusinessService": "[parameters('BusinessService')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -410,21 +389,24 @@
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
         },
+        "availabilitySet": "[if(not(empty(parameters('availabilitySet'))), variables('availabilitySet'), json('null'))]",
         "storageProfile": {
-          "imageReference": {
-            "publisher": "[parameters('osPublisher')]",
-            "offer": "[parameters('osOffer')]",
-            "sku": "[parameters('osSKU')]",
-            "version": "[parameters('osVersion')]"
+          "imageReference": "[variables('imageConfig')]",
+          "osDisk": {
+            "name": "[concat(parameters('vmName'), '-VHD-OSDISK-', uniqueString(resourceGroup().id,deployment().name))]",
+            "createOption": "FromImage",
+            "caching": "ReadWrite",
+            "diskSizeGB": "[if(not(empty(parameters('osDiskSize'))), parameters('osDiskSize'), json('null'))]",
+            "managedDisk": {
+              "storageAccountType": "[parameters('storageType')]"
+            }
           },
-          "osDisk": "[variables('osDiskConfig')]",
           "copy": [
             {
               "name": "dataDisks",

@@ -83,6 +83,9 @@
     "adminPassword": {
       "type": "securestring"
     },
+    "sshKeyData": {
+      "type": "string"
+    },
     "diagStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -308,7 +311,17 @@
         }
       }
     },
-    "osDiskConfig": "[variables('osDiskSizeGiven')[string(equals(equals(parameters('osDiskSize'),''),bool('false')))]]"
+    "osDiskConfig": "[variables('osDiskSizeGiven')[string(equals(equals(parameters('osDiskSize'),''),bool('false')))]]",
+    "sshConfig": {
+      "ssh": {
+        "publicKeys": [
+          {
+            "path": "[variables('sshKeyPath')]",
+            "keyData": "[parameters('sshKeyData')]"
+          }
+        ]
+      }
+    }
   },
   "resources": [
     {
@@ -322,7 +335,6 @@
         "BusinessService": "[parameters('BusinessService')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -360,7 +372,6 @@
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -379,7 +390,8 @@
         "osProfile": {
           "computerName": "[parameters('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
-          "adminPassword": "[parameters('adminPassword')]"
+          "adminPassword": "[parameters('adminPassword')]",
+          "linuxConfiguration": "if(not(empty(parameters('sshKeyData'))), variables('sshConfig'), json('null'))"
         },
         "networkProfile": {
           "networkInterfaces": [

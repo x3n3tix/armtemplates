@@ -78,10 +78,10 @@
         "description": "Name of the subnet in the virtual network you want to use"
       }
     },
-    "nicName": {
+    "nicSuffix": {
       "type": "string",
       "metadata": {
-        "description": "Name of the NIC for the VM to be attached to"
+        "description": "Suffix for the NIC (ie. 001, 0001)"
       }
     },
     "adminUserName": {
@@ -202,42 +202,49 @@
     },
     "workspaceId": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "OMS workspace ID"
       }
     },
     "workspaceName": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "OMS workspace name"
       }
     },
     "workspaceKey": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "OMS workspace key"
       }
     },
     "certificateUrl": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Url of the certificate with version in KeyVault e.g. https://testault.vault.azure.net/secrets/testcert/b621es1db241e56a72d037479xab1r7"
       }
     },
     "sasToken": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "SAS Token for accessing private source control"
       }
     },
     "scriptUri": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Url of the custom script to be run."
       }
     },
     "scriptName": {
       "type": "string",
+      "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
       }
@@ -251,6 +258,7 @@
     },
     "scriptStorageAccountKey": {
       "type": "securestring",
+      "defaultValue": "",
       "metadata": {
         "description": "SAS Token for accessing private source control"
       }
@@ -285,6 +293,7 @@
     }
   },
   "variables": {
+    "nicName": "[concat(parameters('vmName'), '-NIC-', parameters('nicSuffix'))]",
     "api-version": "2015-06-15",
     "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
@@ -358,7 +367,7 @@
   "resources": [
     {
       "type": "Microsoft.Network/networkInterfaces",
-      "name": "[parameters('nicName')]",
+      "name": "[variables('nicName')]",
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
       "tags": {
@@ -367,7 +376,6 @@
         "BusinessService": "[parameters('BusinessService')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('nicName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -394,7 +402,7 @@
       "apiVersion": "2016-04-30-preview",
       "location": "[parameters('vmLocation')]",
       "dependsOn": [
-        "[concat('Microsoft.Network/networkInterfaces/', parameters('nicName'))]"
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
       "tags": {
         "DisplayName": "VirtualMachine",
@@ -405,7 +413,6 @@
         "BYOSoftwareLicense": "[parameters('BYOSoftwareLicense')]",
         "ProjectIdentifier": "[parameters('ProjectIdentifier')]",
         "ResourceEndDate": "[parameters('ResourceEndDate')]",
-        "ResourceIdentifier": "[parameters('vmName')]",
         "SupportIdentifier": "[parameters('SupportIdentifier')]"
       },
       "properties": {
@@ -429,7 +436,7 @@
         "networkProfile": {
           "networkInterfaces": [
             {
-              "id": "[resourceId('Microsoft.Network/networkInterfaces',parameters('nicName'))]"
+              "id": "[resourceId('Microsoft.Network/networkInterfaces', variabls('nicName'))]"
             }
           ]
         },
@@ -549,13 +556,13 @@
         },
         "parameters": {
           "nicName": {
-            "value": "[parameters('nicName')]"
+            "value": "[variables('nicName')]"
           },
           "SubnetRef": {
             "value": "[variables('subnetRef')]"
           },
           "privateIp": {
-            "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', parameters('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
+            "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
           }
         }
       }
