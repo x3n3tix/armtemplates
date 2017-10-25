@@ -289,7 +289,7 @@
       }
     },
     "gitStorageAccessKey": {
-      "type": "securestring"
+      "type": "string"
     }
   },
   "variables": {
