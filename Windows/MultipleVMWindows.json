@@ -287,6 +287,9 @@
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
+    },
+    "gitStorageAccessKey": {
+      "type": "securestring"
     }
   },
   "variables": {
@@ -318,7 +321,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json?AccountKey=',variables('gitStorageAccessKey'))]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json?AccountKey=',parameters('gitStorageAccessKey'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
