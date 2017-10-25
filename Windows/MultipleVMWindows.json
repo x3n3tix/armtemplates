@@ -286,12 +286,7 @@
     }
   },
   "variables": {
-    "vmCount": "[length(parameters('virtualMachines'))]",
-    "batchSizeOutput": {
-      "True": "[length(parameters('virtualMachines'))]",
-      "False": "[parameters('batchSize')]"
-    },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]"
+    "vmCount": "[length(parameters('virtualMachines'))]"
   },
   "resources": [
     {
@@ -302,7 +297,7 @@
         "name": "virtualMachinesCopy",
         "count": "[variables('vmCount')]",
         "mode": "serial",
-        "batchSize": "[variables('batchSizeFinal')]"
+        "batchSize": "[if(greater(parameters('batchSize'),variables('vmCount')), variables('vmCount'), parameters('batchSize'))]"
       },
       "properties": {
         "mode": "Incremental",
