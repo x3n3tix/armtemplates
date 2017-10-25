@@ -228,7 +228,7 @@
         "description": "Url of the certificate with version in KeyVault e.g. https://testault.vault.azure.net/secrets/testcert/b621es1db241e56a72d037479xab1r7"
       }
     },
-    "sasToken": {
+    "githubSASToken": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
@@ -256,7 +256,7 @@
         "description": "Command to run with custom script"
       }
     },
-    "scriptStorageAccountKey": {
+    "storageAccountSASToken": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {

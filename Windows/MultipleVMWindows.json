@@ -299,7 +299,10 @@
     "dataDisksUsed": {
       "True": "DataDisks",
       "False": ""
-    }
+    },
+    "resourceId": "[resourceGroup().id]",
+    "gitStorageId": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/azusydgit'))]",
+    "gitStorageAccessKey": "[listKeys(variables('gitStorageId'),'2015-05-01-preview').key1]"
   },
   "resources": [
     {
@@ -315,7 +318,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Windows/WindowsVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json')]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json?AccountKey=',variables('gitStorageAccessKey'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {

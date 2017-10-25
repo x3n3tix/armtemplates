@@ -99,55 +99,6 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
       }
     },
-    "aadClientID": {
-      "type": "string",
-      "metadata": {
-        "description": "Client ID of AAD app which has permissions to KeyVault"
-      }
-    },
-    "aadClientSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Client Secret of AAD app which has permissions to KeyVault"
-      }
-    },
-    "keyVaultName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the KeyVault to place the volume encryption key"
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resource group of the KeyVault"
-      }
-    },
-    "keyEncryptionKeyURL": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
-      }
-    },
-    "volumeType": {
-      "defaultValue": "Data",
-      "allowedValues": [
-        "OS",
-        "Data",
-        "All"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "Type of the volume OS or Data to perform encryption operation"
-      }
-    },
-    "sequenceVersion": {
-      "defaultValue": "1.0",
-      "type": "string",
-      "metadata": {
-        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
-      }
-    },
     "AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
@@ -279,9 +230,6 @@
     "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
     "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
-    "keyEncryptionAlgorithm": "RSA-OAEP",
-    "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
-    "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "sshKeyPath": "[concat('/home/',parameters('adminUserName'),'/.ssh/authorized_keys')]",
     "resourceId": "[resourceGroup().id]",
     "accountid": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
@@ -501,8 +449,7 @@
     },
     {
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
       ],
       "condition": "[not(empty(parameters('scriptUri')))]",
       "type": "Microsoft.Resources/deployments",

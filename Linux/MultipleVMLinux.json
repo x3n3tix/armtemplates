@@ -93,55 +93,6 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
-    "aadClientID": {
-      "type": "string",
-      "metadata": {
-        "description": "Client ID of AAD app which has permissions to KeyVault"
-      }
-    },
-    "aadClientSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Client Secret of AAD app which has permissions to KeyVault"
-      }
-    },
-    "keyVaultName": {
-      "type": "string",
-      "metadata": {
-        "description": "Name of the KeyVault to place the volume encryption key"
-      }
-    },
-    "keyVaultResourceGroup": {
-      "type": "string",
-      "metadata": {
-        "description": "Resource group of the KeyVault"
-      }
-    },
-    "keyEncryptionKeyURL": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
-      }
-    },
-    "volumeType": {
-      "defaultValue": "All",
-      "allowedValues": [
-        "OS",
-        "Data",
-        "All"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "Type of the volume OS or Data to perform encryption operation"
-      }
-    },
-    "sequenceVersion": {
-      "defaultValue": "1.0",
-      "type": "string",
-      "metadata": {
-        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
-      }
-    },
     "AutoShutdownSchedule": {
       "type": "string",
       "metadata": {
@@ -210,7 +161,7 @@
         "description": "OMS workspace key"
       }
     },
-    "sasToken": {
+    "githubSASToken": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
@@ -238,7 +189,7 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "scriptStorageAccountKey": {
+    "storageAccountSASToken": {
       "type": "securestring",
       "defaultValue": "",
       "metadata": {
@@ -296,7 +247,10 @@
       "True": "[length(parameters('virtualMachines'))]",
       "False": "[parameters('batchSize')]"
     },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]"
+    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]",
+    "resourceId": "[resourceGroup().id]",
+    "gitStorageId": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/azusydgit'))]",
+    "gitStorageAccessKey": "[listKeys(variables('gitStorageId'),'2015-05-01-preview').key1]"
   },
   "resources": [
     {
@@ -312,7 +266,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Linux/LinuxVM',variables('osImageRef'),variables('useAvailabilitySet')[string(equals(equals(parameters('virtualMachines')[copyIndex()]['AvailabilitySet'],''),bool('false')))],'.json')]",
+          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/LinuxVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -358,27 +312,6 @@
           "diagStorageAccountName": {
             "value": "[parameters('diagStorageAccountName')]"
           },
-          "aadClientID": {
-            "value": "[parameters('aadClientID')]"
-          },
-          "aadClientSecret": {
-            "value": "[parameters('aadClientSecret')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "keyEncryptionKeyURL": {
-            "value": "[parameters('keyEncryptionKeyURL')]"
-          },
-          "volumeType": {
-            "value": "[parameters('volumeType')]"
-          },
-          "sequenceVersion": {
-            "value": "[parameters('sequenceVersion')]"
-          },
           "BillingIdentifier": {
             "value": "[parameters('BillingIdentifier')]"
           },
@@ -421,11 +354,11 @@
           "scriptCommand": {
             "value": "[parameters('scriptCommand')]"
           },
-          "scriptStorageAccountKey": {
-            "value": "[parameters('scriptStorageAccountKey')]"
+          "storageAccountSASToken": {
+            "value": "[parameters('storageAccountSASToken')]"
           },
-          "sasToken": {
-            "value": "[parameters('sasToken')]"
+          "githubSASToken": {
+            "value": "[parameters('githubSASToken')]"
           },
           "osPublisher": {
             "value": "[parameters('osPublisher')]"
