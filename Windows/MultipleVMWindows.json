@@ -304,7 +304,7 @@
       "False": ""
     },
     "resourceId": "[resourceGroup().id]",
-    "gitStorageId": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/azusydgit'))]",
+    "gitStorageId": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/azusydgit')]",
     "gitStorageAccessKey": "[listKeys(variables('gitStorageId'),'2015-05-01-preview').key1]"
   },
   "resources": [
