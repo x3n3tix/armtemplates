@@ -298,8 +298,7 @@
       "True": "[length(parameters('virtualMachines'))]",
       "False": "[parameters('batchSize')]"
     },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]",
-    "dataDisksUsed": "[if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])), 'DataDisks', '')]"
+    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]"
   },
   "resources": [
     {
@@ -315,7 +314,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM', variables('dataDisksUsed'),'.json?AccountKey=',parameters('gitStorageAccessKey'))]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/WindowsVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])), 'DataDisks', ''),'.json?AccountKey=',parameters('gitStorageAccessKey'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
