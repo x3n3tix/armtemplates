@@ -103,53 +103,16 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
-    "aadClientID": {
-      "type": "string",
-      "metadata": {
-        "description": "Client ID of AAD app which has permissions to KeyVault"
-      }
-    },
-    "aadClientSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Client Secret of AAD app which has permissions to KeyVault"
-      }
-    },
     "keyVaultName": {
       "type": "string",
       "metadata": {
-        "description": "Name of the KeyVault to place the volume encryption key"
+        "description": "Name of the KeyVault for certificate"
       }
     },
     "keyVaultResourceGroup": {
       "type": "string",
       "metadata": {
         "description": "Resource group of the KeyVault"
-      }
-    },
-    "keyEncryptionKeyURL": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
-      }
-    },
-    "volumeType": {
-      "defaultValue": "All",
-      "allowedValues": [
-        "OS",
-        "Data",
-        "All"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "Type of the volume OS or Data to perform encryption operation"
-      }
-    },
-    "sequenceVersion": {
-      "defaultValue": "1.0",
-      "type": "string",
-      "metadata": {
-        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
     "AutoShutdownSchedule": {
@@ -297,7 +260,6 @@
     "api-version": "2015-06-15",
     "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
     "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
-    "keyEncryptionAlgorithm": "RSA-OAEP",
     "keyVaultURL": "[concat('https://', parameters('keyVaultName'), '.vault.azure.net/')]",
     "keyVaultResourceID": "[concat(subscription().id,'/resourceGroups/',parameters('keyVaultResourceGroup'),'/providers/Microsoft.KeyVault/vaults/', parameters('keyVaultName'))]",
     "resourceId": "[resourceGroup().id]",
@@ -476,8 +438,7 @@
           "apiVersion": "[variables('api-version')]",
           "location": "[parameters('vmLocation')]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.NetworkWatcher",
@@ -492,8 +453,7 @@
           "apiVersion": "2015-05-01-preview",
           "location": "[resourceGroup().location]",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties": {
             "publisher": "Microsoft.Azure.Diagnostics",
@@ -508,34 +468,6 @@
               "storageAccountName": "[parameters('diagStorageAccountName')]",
               "storageAccountKey": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]",
               "storageAccountEndPoint": "https://core.windows.net/"
-            }
-          }
-        },
-        {
-          "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'NetworkWatcherAgent')]"
-          ],
-          "type": "extensions",
-          "name": "AzureDiskEncryption",
-          "apiVersion": "2016-03-30",
-          "location": "[parameters('vmLocation')]",
-          "properties": {
-            "publisher": "Microsoft.Azure.Security",
-            "type": "AzureDiskEncryption",
-            "typeHandlerVersion": "1.1",
-            "autoUpgradeMinorVersion": true,
-            "forceUpdateTag": "[parameters('sequenceVersion')]",
-            "settings": {
-              "AADClientID": "[parameters('aadClientID')]",
-              "KeyVaultURL": "[variables('keyVaultURL')]",
-              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
-              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
-              "VolumeType": "[parameters('volumeType')]",
-              "EncryptionOperation": "EnableEncryption"
-            },
-            "protectedSettings": {
-              "AADClientSecret": "[parameters('aadClientSecret')]"
             }
           }
         }
@@ -569,40 +501,7 @@
     },
     {
       "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
-      ],
-      "type": "Microsoft.Resources/deployments",
-      "name": "[concat(parameters('vmName'),'.updatevm')]",
-      "apiVersion": "2015-01-01",
-      "properties": {
-        "mode": "Incremental",
-        "templateLink": {
-          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
-          "contentVersion": "1.0.0.0"
-        },
-        "parameters": {
-          "vmName": {
-            "value": "[parameters('vmName')]"
-          },
-          "vmLocation": {
-            "value": "[parameters('vmLocation')]"
-          },
-          "keyVaultResourceID": {
-            "value": "[variables('keyVaultResourceID')]"
-          },
-          "keyVaultSecretUrl": {
-            "value": "[reference(resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryption')).instanceView.statuses[0].message]"
-          },
-          "keyEncryptionKeyURL": {
-            "value": "[parameters('keyEncryptionKeyURL')]"
-          }
-        }
-      }
-    },
-    {
-      "dependsOn": [
-        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-        "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'AzureDiskEncryption')]"
+        "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
       ],
       "condition": "[not(empty(parameters('scriptUri')))]",
       "type": "Microsoft.Resources/deployments",

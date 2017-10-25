@@ -93,18 +93,6 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
-    "aadClientID": {
-      "type": "string",
-      "metadata": {
-        "description": "Client ID of AAD app which has permissions to KeyVault"
-      }
-    },
-    "aadClientSecret": {
-      "type": "securestring",
-      "metadata": {
-        "description": "Client Secret of AAD app which has permissions to KeyVault"
-      }
-    },
     "keyVaultName": {
       "type": "string",
       "metadata": {
@@ -115,30 +103,6 @@
       "type": "string",
       "metadata": {
         "description": "Resource group of the KeyVault"
-      }
-    },
-    "keyEncryptionKeyURL": {
-      "type": "string",
-      "metadata": {
-        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
-      }
-    },
-    "volumeType": {
-      "allowedValues": [
-        "OS",
-        "Data",
-        "All"
-      ],
-      "type": "string",
-      "metadata": {
-        "description": "Type of the volume OS or Data to perform encryption operation"
-      }
-    },
-    "sequenceVersion": {
-      "defaultValue": "1.0",
-      "type": "string",
-      "metadata": {
-        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
       }
     },
     "AutoShutdownSchedule": {
@@ -362,15 +326,6 @@
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "keyEncryptionKeyURL": {
-            "value": "[parameters('keyEncryptionKeyURL')]"
-          },
-          "volumeType": {
-            "value": "[parameters('volumeType')]"
-          },
-          "sequenceVersion": {
-            "value": "[parameters('sequenceVersion')]"
           },
           "BillingIdentifier": {
             "value": "[parameters('BillingIdentifier')]"
