@@ -318,12 +318,6 @@
           "diagStorageAccountName": {
             "value": "[parameters('diagStorageAccountName')]"
           },
-          "aadClientID": {
-            "value": "[parameters('aadClientID')]"
-          },
-          "aadClientSecret": {
-            "value": "[parameters('aadClientSecret')]"
-          },
           "keyVaultName": {
             "value": "[parameters('keyVaultName')]"
           },
