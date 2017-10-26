@@ -12,8 +12,11 @@
       "type": "string",
       "allowedValues": [
         "Australia East",
+        "australiaeast",
         "Australia Southeast",
-        "West US 2"
+        "australiasoutheast",
+        "West US 2",
+        "westus2"
       ],
       "metadata": {
         "description": "Location to deploy NIC, VM and its extensions"
@@ -95,12 +98,14 @@
     },
     "AutoShutdownSchedule": {
       "type": "string",
+      "defaultValue": "N/A",
       "metadata": {
         "description": "Tag used for automatic shutdown and startup of VM"
       }
     },
     "AutoRestartSchedule": {
       "type": "string",
+      "defaultValue": "N/A",
       "metadata": {
         "description": "Tag used for automatic restart of VM, usually for post patching"
       }
@@ -161,13 +166,6 @@
         "description": "OMS workspace key"
       }
     },
-    "githubSASToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
-      }
-    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
@@ -187,13 +185,6 @@
       "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
-      }
-    },
-    "storageAccountSASToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
       }
     },
     "branch": {
@@ -230,27 +221,13 @@
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
+    },
+    "storageSASToken": {
+      "type": "securestring"
     }
   },
   "variables": {
-    "vmCount": "[length(parameters('virtualMachines'))]",
-    "useAvailabilitySet": {
-      "true": "AVS",
-      "false": ""
-    },
-    "useCustomImage": {
-      "true": "Custom",
-      "false": ""
-    },
-    "osImageRef": "[variables('useCustomImage')[string(equals(equals(parameters('osImage'),''),bool('false')))]]",
-    "batchSizeOutput": {
-      "True": "[length(parameters('virtualMachines'))]",
-      "False": "[parameters('batchSize')]"
-    },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]",
-    "resourceId": "[resourceGroup().id]",
-    "gitStorageId": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/azusydgit'))]",
-    "gitStorageAccessKey": "[listKeys(variables('gitStorageId'),'2015-05-01-preview').key1]"
+    "vmCount": "[length(parameters('virtualMachines'))]"
   },
   "resources": [
     {
@@ -261,12 +238,12 @@
         "name": "virtualMachinesCopy",
         "count": "[variables('vmCount')]",
         "mode": "serial",
-        "batchSize": "[variables('batchSizeFinal')]"
+        "batchSize": "[if(greater(parameters('batchSize'),variables('vmCount')), variables('vmCount'), parameters('batchSize'))]"
       },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/LinuxVM',variables('dataDisksUsed')[string(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])))],'.json')]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/LinuxVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDiskArray'])), 'DataDisks', ''),'.json',parameters('storageSASToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
@@ -278,6 +255,9 @@
           },
           "availabilitySet": {
             "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
+          },
+          "attachedDataDisks": {
+            "value": "[parameters('virtualMachines')[copyIndex()]['DataDiskArray']]"
           },
           "vmLocation": {
             "value": "[parameters('vmLocation')]"
@@ -300,8 +280,8 @@
           "subnetName": {
             "value": "[parameters('subnetName')]"
           },
-          "nicName": {
-            "value": "[concat(parameters('virtualMachines')[copyIndex()]['Name'],'-NIC-',parameters('nicSuffix'))]"
+          "nicSuffix": {
+            "value": "[parameters('nicSuffix')]"
           },
           "adminUserName": {
             "value": "[parameters('adminUserName')]"
@@ -354,12 +334,6 @@
           "scriptCommand": {
             "value": "[parameters('scriptCommand')]"
           },
-          "storageAccountSASToken": {
-            "value": "[parameters('storageAccountSASToken')]"
-          },
-          "githubSASToken": {
-            "value": "[parameters('githubSASToken')]"
-          },
           "osPublisher": {
             "value": "[parameters('osPublisher')]"
           },
@@ -371,6 +345,9 @@
           },
           "osVersion": {
             "value": "[parameters('osVersion')]"
+          },
+          "storageSASToken": {
+            "value": "[parameters('storageSASToken')]"
           }
         }
       }

@@ -185,13 +185,6 @@
         "description": "Url of the certificate with version in KeyVault e.g. https://testault.vault.azure.net/secrets/testcert/b621es1db241e56a72d037479xab1r7"
       }
     },
-    "sasToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
-      }
-    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
@@ -380,6 +373,9 @@
           },
           "osVersion": {
             "value": "[parameters('osVersion')]"
+          },
+          "storageSASToken": {
+            "value": "[parameters('storageSASToken')]"
           }
         }
       }
