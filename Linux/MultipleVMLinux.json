@@ -83,6 +83,10 @@
     "adminPassword": {
       "type": "securestring"
     },
+    "sshKeyData": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "diagStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -288,6 +292,9 @@
           },
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
+          },
+          "sshKeyData": {
+            "value": "[parameters('sshKeyData')]"
           },
           "diagStorageAccountName": {
             "value": "[parameters('diagStorageAccountName')]"

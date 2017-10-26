@@ -94,7 +94,8 @@
       "type": "securestring"
     },
     "sshKeyData": {
-      "type": "string"
+      "type": "string",
+      "defaultValue": ""
     },
     "diagStorageAccountName": {
       "type": "string",
@@ -363,7 +364,7 @@
           "computerName": "[parameters('vmName')]",
           "adminUsername": "[parameters('adminUsername')]",
           "adminPassword": "[parameters('adminPassword')]",
-          "linuxConfiguration": "if(not(empty(parameters('sshKeyData'))), variables('sshConfig'), json('null'))"
+          "linuxConfiguration": "[if(not(empty(parameters('sshKeyData'))), variables('sshConfig'), json('null'))]"
         },
         "networkProfile": {
           "networkInterfaces": [
