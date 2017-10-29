@@ -357,7 +357,7 @@
                 "createOption": "Empty",
                 "caching": "ReadWrite",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('dataDisks')[copyIndex()][1]]"
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
                 }
               }
             }
