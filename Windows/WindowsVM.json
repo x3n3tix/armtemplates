@@ -21,7 +21,7 @@
         "description": "Name of the availability set if defined"
       }
     },
-    "attachedDataDisks": {
+    "dataDisks": {
       "type": "array",
       "defaultValue": [],
       "metadata": {

@@ -21,7 +21,7 @@
         "description": "Name of the availability set if defined"
       }
     },
-    "attachedDataDisks": {
+    "dataDisks": {
       "type": "array",
       "defaultValue": [],
       "metadata": {
@@ -349,11 +349,11 @@
           "copy": [
             {
               "name": "dataDisks",
-              "count": "[length(parameters('attachedDataDisks'))]",
+              "count": "[length(parameters('dataDisks'))]",
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-                "diskSizeGB": "[parameters('attachedDataDisks')[copyIndex('dataDisks')][0]]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')][0]]",
                 "createOption": "Empty",
                 "caching": "ReadWrite",
                 "managedDisk": {
