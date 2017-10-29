@@ -24,11 +24,11 @@
     },
     "batchSize": {
       "type": "int",
-      "defaultValue": 10,
+      "defaultValue": 50,
       "minValue": 1,
-      "maxValue": 10,
+      "maxValue": 50,
       "metadata": {
-        "description": "Number of simultaneous VMs to deploy per batch (Default = 10)."
+        "description": "Number of simultaneous VMs to deploy per batch (Default = 50)."
       }
     },
     "osImage": {
@@ -43,13 +43,6 @@
       "defaultValue": "",
       "metadata": {
         "description": "Size of the OS Disk (in GB)"
-      }
-    },
-    "storageType": {
-      "type": "string",
-      "defaultValue": "Premium_LRS",
-      "metadata": {
-        "description": "Storage type for VM (ie. Standard_LRS, Premium_LRS, etc.)"
       }
     },
     "existingVirtualNetworkName": {
@@ -108,56 +101,10 @@
         "description": "Resource group of the KeyVault"
       }
     },
-    "AutoShutdownSchedule": {
-      "type": "string",
-      "defaultValue": "N/A",
+    "tags": {
+      "type": "object",
       "metadata": {
-        "description": "Tag used for automatic shutdown and startup of VM"
-      }
-    },
-    "AutoRestartSchedule": {
-      "type": "string",
-      "defaultValue": "N/A",
-      "metadata": {
-        "description": "Tag used for automatic restart of VM, usually for post patching"
-      }
-    },
-    "BillingIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying ACC charge code"
-      }
-    },
-    "BusinessService": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying Business Service for resources"
-      }
-    },
-    "BYOSoftwareLicense": {
-      "type": "string",
-      "defaultValue": "N/A",
-      "metadata": {
-        "description": "Tags used for Software Licensing requirements of resource"
-      }
-    },
-    "ProjectIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying ACC Project code"
-      }
-    },
-    "ResourceEndDate": {
-      "type": "string",
-      "defaultValue": "N/A",
-      "metadata": {
-        "description": "Tags used for indicating likley termination date of resource"
-      }
-    },
-    "SupportIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for support of resources"
+        "description": "Object with list of tags to add onto the NIC and VM"
       }
     },
     "workspaceId": {
@@ -265,6 +212,9 @@
           "vmSize": {
             "value": "[parameters('virtualMachines')[copyIndex()]['Size']]"
           },
+          "storageType": {
+            "value": "[parameters('virtualMachines')[copyIndex()]['StorageType']]"
+          },
           "availabilitySet": {
             "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
           },
@@ -279,9 +229,6 @@
           },
           "osDiskSize": {
             "value": "[parameters('osDiskSize')]"
-          },
-          "storageType": {
-            "value": "[parameters('storageType')]"
           },
           "existingVirtualNetworkName": {
             "value": "[parameters('existingVirtualNetworkName')]"
@@ -310,29 +257,8 @@
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
           },
-          "BillingIdentifier": {
-            "value": "[parameters('BillingIdentifier')]"
-          },
-          "ProjectIdentifier": {
-            "value": "[parameters('ProjectIdentifier')]"
-          },
-          "AutoShutdownSchedule": {
-            "value": "[parameters('AutoShutdownSchedule')]"
-          },
-          "AutoRestartSchedule": {
-            "value": "[parameters('AutoRestartSchedule')]"
-          },
-          "BusinessService": {
-            "value": "[parameters('BusinessService')]"
-          },
-          "ResourceEndDate": {
-            "value": "[parameters('ResourceEndDate')]"
-          },
-          "BYOSoftwareLicense": {
-            "value": "[parameters('BYOSoftwareLicense')]"
-          },
-          "SupportIdentifier": {
-            "value": "[parameters('SupportIdentifier')]"
+          "tags": {
+            "value": "[parameters('tags')]"
           },
           "workspaceId": {
             "value": "[parameters('workspaceId')]"

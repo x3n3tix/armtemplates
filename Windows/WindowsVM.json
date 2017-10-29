@@ -25,7 +25,7 @@
       "type": "array",
       "defaultValue": [],
       "metadata": {
-        "description": "Array of datadisks to add to VM at deployment (ie, [512,2048] would add 2 datadisks, 1 at 512GB and 1 at 2TB )"
+        "description": "Array of datadisks to add to VM at deployment (ie, [[512,Premium_LRS],[2048,Standard_LRS]] would add 2 datadisks, 1 at 512GB and Premium_LRS storage type, and 1 at 2TB and Standard_LRS storage type. )"
       }
     },
     "vmLocation": {

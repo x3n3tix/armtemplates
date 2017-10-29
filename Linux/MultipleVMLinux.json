@@ -24,11 +24,11 @@
     },
     "batchSize": {
       "type": "int",
-      "defaultValue": 10,
+      "defaultValue": 50,
       "minValue": 1,
-      "maxValue": 10,
+      "maxValue": 50,
       "metadata": {
-        "description": "Number of simultaneous VMs to deploy per batch (Default = 10)."
+        "description": "Number of simultaneous VMs to deploy per batch (Default = 50)."
       }
     },
     "osImage": {
