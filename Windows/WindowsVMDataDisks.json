@@ -353,11 +353,11 @@
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-                "diskSizeGB": "[parameters('attachedDataDisks')[copyIndex('dataDisks')]]",
+                "diskSizeGB": "[parameters('attachedDataDisks')[copyIndex('dataDisks')][0]]",
                 "createOption": "Empty",
                 "caching": "ReadWrite",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('storageType')]"
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex()][1]]"
                 }
               }
             }
