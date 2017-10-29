@@ -206,13 +206,6 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "branch": {
-      "type": "string",
-      "defaultValue": "prod",
-      "metadata": {
-        "description": "Defines which branch to access the linked template script."
-      }
-    },
     "osPublisher": {
       "type": "string",
       "defaultValue": "MicrosoftWindowsServer",
