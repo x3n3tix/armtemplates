@@ -221,6 +221,9 @@
           "dataDisks": {
             "value": "[parameters('virtualMachines')[copyIndex()]['DataDisks']]"
           },
+          "tags": {
+            "value": "[parameters('tags')]"
+          },
           "vmLocation": {
             "value": "[parameters('vmLocation')]"
           },
@@ -256,9 +259,6 @@
           },
           "keyVaultResourceGroup": {
             "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "tags": {
-            "value": "[parameters('tags')]"
           },
           "workspaceId": {
             "value": "[parameters('workspaceId')]"
