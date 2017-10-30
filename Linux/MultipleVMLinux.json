@@ -195,7 +195,10 @@
             "value": "[parameters('virtualMachines')[copyIndex()]['Name']]"
           },
           "vmSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['Size']]"
+            "value": "[parameters('virtualMachines')[copyIndex()]['VMSize']]"
+          },
+          "osDiskSize": {
+            "value": "[parameters('virtualMachines')[copyIndex()]['OSDiskSize']]"
           },
           "storageType": {
             "value": "[parameters('virtualMachines')[copyIndex()]['StorageType']]"
@@ -214,9 +217,6 @@
           },
           "osImage": {
             "value": "[parameters('osImage')]"
-          },
-          "osDiskSize": {
-            "value": "[parameters('osDiskSize')]"
           },
           "existingVirtualNetworkName": {
             "value": "[parameters('existingVirtualNetworkName')]"
