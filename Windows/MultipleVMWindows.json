@@ -222,7 +222,7 @@
             "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
           },
           "dataDisks": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['DataDisks']]"
+            "value": "[array(parameters('virtualMachines')[copyIndex()]['DataDisks'])]"
           },
           "tags": {
             "value": "[parameters('tags')]"

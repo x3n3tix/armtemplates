@@ -50,8 +50,8 @@
       }
     },
     "osDiskSize": {
-      "defaultValue": 128,
-      "type": "int",
+      "defaultValue": "128",
+      "type": "string",
       "metadata": {
         "description": "Size of the OS Disk (in GB)"
       }
