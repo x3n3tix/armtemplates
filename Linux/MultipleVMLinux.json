@@ -209,6 +209,12 @@
           "dataDisks": {
             "value": "[array(parameters('virtualMachines')[copyIndex()]['DataDisks'])]"
           },
+          "tagAutoShutdownSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule)]"
+          },
+          "tagAutoRestartSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoRestartSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoRestartSchedule)]"
+          },
           "tags": {
             "value": "[parameters('tags')]"
           },

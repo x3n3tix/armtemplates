@@ -207,22 +207,28 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['Name']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].Name]"
           },
           "vmSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['VMSize']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].VMSize]"
           },
           "osDiskSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['OSDiskSize']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].OSDiskSize]"
           },
           "storageType": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['StorageType']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].StorageType]"
           },
           "availabilitySet": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].AvailabilitySet]"
           },
           "dataDisks": {
-            "value": "[array(parameters('virtualMachines')[copyIndex()]['DataDisks'])]"
+            "value": "[array(parameters('virtualMachines')[copyIndex()].DataDisks)]"
+          },
+          "tagAutoShutdownSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule)]"
+          },
+          "tagAutoRestartSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoRestartSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoRestartSchedule)]"
           },
           "tags": {
             "value": "[parameters('tags')]"

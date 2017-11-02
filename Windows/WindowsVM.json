@@ -42,6 +42,20 @@
         "description": "Location of the resources"
       }
     },
+    "tagAutoShutdownSchedule": {
+      "defaultValue": "N/A",
+      "type": "string",
+      "metadata": {
+        "description": "Tag for automatic shutdown and deallocation of VM"
+      }
+    },
+    "tagAutoRestartSchedule": {
+      "defaultValue": "N/A",
+      "type": "string",
+      "metadata": {
+        "description": "Tag for automatic restart of VM"
+      }
+    },
     "osImage": {
       "defaultValue": "",
       "type": "string",
@@ -321,8 +335,8 @@
       ],
       "tags": {
         "DisplayName": "VirtualMachine",
-        "AutoShutdownSchedule": "[parameters('tags').AutoShutdownSchedule]",
-        "AutoRestartSchedule": "[parameters('tags').AutoRestartSchedule]",
+        "AutoShutdownSchedule": "[parameters('tagAutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('tagAutoRestartSchedule')]",
         "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
         "BusinessService": "[parameters('tags').BusinessService]",
         "BYOSoftwareLicense": "[parameters('tags').BYOSoftwareLicense]",
