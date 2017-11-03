@@ -93,13 +93,6 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
-    "xmlCfg": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "base64 String of xmlCfg for vmDiagnostics extension"
-      }
-    },
     "tags": {
       "type": "object",
       "metadata": {
@@ -126,49 +119,49 @@
     },
     "scriptUri": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "RedHat",
       "metadata": {
         "description": "Url of the custom script to be run."
       }
     },
     "scriptName": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "RHEL",
       "metadata": {
         "description": "Name of the custom script to be run."
       }
     },
     "scriptCommand": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "7-LVM",
       "metadata": {
         "description": "Name of the custom script to be run."
       }
     },
     "osPublisher": {
       "type": "string",
-      "defaultValue": "RedHat",
+      "defaultValue": "latest",
       "metadata": {
         "description": "OS Publisher of Marketplace image."
       }
     },
     "osOffer": {
       "type": "string",
-      "defaultValue": "RHEL",
+      "defaultValue": "",
       "metadata": {
         "description": "Offer of Marketplace image."
       }
     },
     "osSKU": {
       "type": "string",
-      "defaultValue": "7-LVM",
+      "defaultValue": "",
       "metadata": {
         "description": "SKU to use for Marketplace image"
       }
     },
     "osVersion": {
       "type": "string",
-      "defaultValue": "7.3.2017091115",
+      "defaultValue": "",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
@@ -199,22 +192,22 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['Name']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].Name]"
           },
           "vmSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['VMSize']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].VMSize]"
           },
           "osDiskSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['OSDiskSize']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].OSDiskSize]"
           },
           "storageType": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['StorageType']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].StorageType]"
           },
           "availabilitySet": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].AvailabilitySet]"
           },
           "dataDisks": {
-            "value": "[array(parameters('virtualMachines')[copyIndex()]['DataDisks'])]"
+            "value": "[array(parameters('virtualMachines')[copyIndex()].DataDisks)]"
           },
           "tagAutoShutdownSchedule": {
             "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule)]"
@@ -257,9 +250,6 @@
           },
           "diagExtensionVersion": {
             "value": "[parameters('diagExtensionVersion')]"
-          },
-          "xmlCfg": {
-            "value": "[parameters('xmlCfg')]"
           },
           "workspaceId": {
             "value": "[parameters('workspaceId')]"

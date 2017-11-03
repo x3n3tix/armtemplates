@@ -89,13 +89,6 @@
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
       }
     },
-    "xmlCfg": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "base64 String of xmlCfg for vmDiagnostics extension"
-      }
-    },
     "keyVaultName": {
       "type": "string",
       "metadata": {
@@ -269,9 +262,6 @@
           },
           "diagExtensionVersion": {
             "value": "[parameters('diagExtensionVersion')]"
-          },
-          "xmlCfg": {
-            "value": "[parameters('xmlCfg')]"
           },
           "keyVaultName": {
             "value": "[parameters('keyVaultName')]"
