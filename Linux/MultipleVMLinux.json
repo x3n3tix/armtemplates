@@ -119,49 +119,49 @@
     },
     "scriptUri": {
       "type": "string",
-      "defaultValue": "RedHat",
+      "defaultValue": "",
       "metadata": {
         "description": "Url of the custom script to be run."
       }
     },
     "scriptName": {
       "type": "string",
-      "defaultValue": "RHEL",
+      "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
       }
     },
     "scriptCommand": {
       "type": "string",
-      "defaultValue": "7-LVM",
+      "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
       }
     },
     "osPublisher": {
       "type": "string",
-      "defaultValue": "latest",
+      "defaultValue": "RedHat",
       "metadata": {
         "description": "OS Publisher of Marketplace image."
       }
     },
     "osOffer": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "RHEL",
       "metadata": {
         "description": "Offer of Marketplace image."
       }
     },
     "osSKU": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "7-LVM",
       "metadata": {
         "description": "SKU to use for Marketplace image"
       }
     },
     "osVersion": {
       "type": "string",
-      "defaultValue": "",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
