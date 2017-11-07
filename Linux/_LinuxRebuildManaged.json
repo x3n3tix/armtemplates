@@ -175,13 +175,6 @@
         "description": "OMS workspace key"
       }
     },
-    "storageSASToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
-      }
-    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
