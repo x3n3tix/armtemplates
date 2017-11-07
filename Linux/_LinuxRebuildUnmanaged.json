@@ -1,0 +1,439 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "virtualMachine": {
+      "type": "object",
+      "metadata": {
+        "description": "Virtual Machine to rebuild"
+      }
+    },
+    "vmLocation": {
+      "type": "string",
+      "allowedValues": [
+        "Australia East",
+        "australiaeast",
+        "Australia Southeast",
+        "australiasoutheast",
+        "West US 2",
+        "westus2"
+      ],
+      "metadata": {
+        "description": "Location of the resources"
+      }
+    },
+    "tagAutoShutdownSchedule": {
+      "defaultValue": "N/A",
+      "type": "string",
+      "metadata": {
+        "description": "Tag for automatic shutdown and deallocation of VM"
+      }
+    },
+    "tagAutoRestartSchedule": {
+      "defaultValue": "N/A",
+      "type": "string",
+      "metadata": {
+        "description": "Tag for automatic restart of VM"
+      }
+    },
+    "existingVHDName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of existing OSDisk VHD to use for build"
+      }
+    },
+    "existingVHDStorageAccount": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the storage account the existing VHD resides."
+      }
+    },
+    "existingVirtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing VNET"
+      }
+    },
+    "existingVirtualNetworkResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing VNET resource group"
+      }
+    },
+    "subnetName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the subnet in the virtual network you want to use"
+      }
+    },
+    "nicSuffix": {
+      "type": "string",
+      "defaultValue": "0001",
+      "metadata": {
+        "description": "Suffix for the NIC (ie. 001, 0001)"
+      }
+    },
+    "diagStorageAccountName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the existing Boot Diag Storage Account to use during deployment"
+      }
+    },
+    "diagExtensionVersion": {
+      "type": "string",
+      "defaultValue": "2.3",
+      "metadata": {
+        "description": "Version of the VM Diagnostics extension (ie. 1.4 for Windows or 2.3 for Linux)"
+      }
+    },
+    "tags": {
+      "type": "object",
+      "metadata": {
+        "description": "Object with list of tags to add onto the NIC and VM"
+      }
+    },
+    "aadClientID": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Client ID of AAD app which has permissions to KeyVault"
+      }
+    },
+    "aadClientSecret": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Client Secret of AAD app which has permissions to KeyVault"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the KeyVault to place the volume encryption key"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Resource group of the KeyVault"
+      }
+    },
+    "keyEncryptionKeyURL": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
+      }
+    },
+    "keyVaultResourceID": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "ID for the keyvault"
+      }
+    },
+    "keyVaultSecretUrl": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "URL to the secret for encryption"
+      }
+    },
+    "volumeType": {
+      "allowedValues": [
+        "OS",
+        "Data",
+        "All"
+      ],
+      "type": "string",
+      "defaultValue": "All",
+      "metadata": {
+        "description": "Type of the volume OS or Data to perform encryption operation"
+      }
+    },
+    "sequenceVersion": {
+      "defaultValue": "1.0",
+      "type": "string",
+      "metadata": {
+        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
+      }
+    },
+    "workspaceId": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "OMS workspace ID"
+      }
+    },
+    "workspaceName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "OMS workspace name"
+      }
+    },
+    "workspaceKey": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "OMS workspace key"
+      }
+    },
+    "storageSASToken": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "SAS Token for accessing private source control"
+      }
+    },
+    "scriptUri": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Url of the custom script to be run."
+      }
+    },
+    "scriptName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Name of the custom script to be run."
+      }
+    },
+    "scriptCommand": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Command to run with custom script"
+      }
+    }
+  },
+  "variables": {
+    "nicName": "[concat(parameters('virtualMachine').Name, '-NIC-', parameters('nicSuffix'))]",
+    "existingVHDUri": "[concat('https://',parameters('existingVHDStorageAccount'),'.blob.core.windows.net/vhds/',parameters('existingVHDName'),'.vhd')]",
+    "api-version": "2015-06-15",
+    "vnetID": "[resourceId(parameters('existingVirtualNetworkResourceGroup'), 'Microsoft.Network/virtualNetworks', parameters('existingVirtualNetworkName'))]",
+    "uniqueDnsLabelPrefix": "[concat('store', uniquestring(resourceGroup().id))]",
+    "subnetRef": "[concat(variables('vnetID'),'/subnets/', parameters('subnetName'))]",
+    "resourceId": "[resourceGroup().id]",
+    "accountid": "[concat(variables('resourceId'),'/providers/Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName'))]",
+    "metricsresourceid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',resourceGroup().name,'/providers/Microsoft.Compute/virtualMachines/',parameters('virtualMachine').Name)]",
+    "metricsclosing": "[concat('<Metrics resourceId=\"', variables('metricsresourceid'), '\"><MetricAggregation scheduledTransferPeriod=\"PT1H\"/><MetricAggregation scheduledTransferPeriod=\"PT1M\"/></Metrics></DiagnosticMonitorConfiguration></WadCfg>')]",
+    "metricscounters": "<PerformanceCounters scheduledTransferPeriod=\"PT1M\"><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableMemory\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Memory available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableMemory\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"Mem. percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedMemory\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Memory used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedMemory\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"Memory percentage\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedByCache\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"Mem. used by cache\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesPerSec\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Pages\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesReadPerSec\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Page reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PagesWrittenPerSec\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Page writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\AvailableSwap\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Swap available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentAvailableSwap\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"Swap percent available\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\UsedSwap\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Swap used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Memory\\PercentUsedSwap\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"Swap percent used\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIdleTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU idle time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentUserTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU user time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentNiceTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU nice time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentPrivilegedTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU privileged time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentInterruptTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU interrupt time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentDPCTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU DPC time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentProcessorTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU percentage guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\Processor\\PercentIOWaitTime\" sampleRate=\"PT60S\" unit=\"Percent\"><annotation displayName=\"CPU IO wait time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\BytesPerSecond\" sampleRate=\"PT60S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadBytesPerSecond\" sampleRate=\"PT60S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk read guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WriteBytesPerSecond\" sampleRate=\"PT60S\" unit=\"BytesPerSecond\"><annotation displayName=\"Disk write guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\TransfersPerSecond\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk transfers\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\ReadsPerSecond\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk reads\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\WritesPerSecond\" sampleRate=\"PT60S\" unit=\"CountPerSecond\"><annotation displayName=\"Disk writes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageReadTime\" sampleRate=\"PT60S\" unit=\"Seconds\"><annotation displayName=\"Disk read time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageWriteTime\" sampleRate=\"PT60S\" unit=\"Seconds\"><annotation displayName=\"Disk write time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageTransferTime\" sampleRate=\"PT60S\" unit=\"Seconds\"><annotation displayName=\"Disk transfer time\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\PhysicalDisk\\AverageDiskQueueLength\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Disk queue length\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTransmitted\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Network out guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesReceived\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Network in guest OS\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsTransmitted\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Packets sent\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\PacketsReceived\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Packets received\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\BytesTotal\" sampleRate=\"PT60S\" unit=\"Bytes\"><annotation displayName=\"Network total bytes\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalRxErrors\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Packets received errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalTxErrors\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Packets sent errors\" locale=\"en-us\"/></PerformanceCounterConfiguration><PerformanceCounterConfiguration counterSpecifier=\"\\NetworkInterface\\TotalCollisions\" sampleRate=\"PT60S\" unit=\"Count\"><annotation displayName=\"Network collisions\" locale=\"en-us\"/></PerformanceCounterConfiguration></PerformanceCounters>",
+    "metricsstart": "<WadCfg><DiagnosticMonitorConfiguration overallQuotaInMB=\"4096\"><DiagnosticInfrastructureLogs scheduledTransferPeriod=\"PT1M\" scheduledTransferLogLevelFilter=\"Warning\"/>",
+    "wadcfgx": "[concat(variables('metricsstart'), variables('metricscounters'), variables('metricsclosing'))]",
+    "availabilitySet": {
+      "id": "[resourceId('Microsoft.Compute/availabilitySets',parameters('virtualMachine').AvailabilitySet)]"
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Network/networkInterfaces",
+      "name": "[variables('nicName')]",
+      "apiVersion": "[variables('api-version')]",
+      "location": "[parameters('vmLocation')]",
+      "tags": {
+        "DisplayName": "PrivateIPAddress",
+        "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
+        "BusinessService": "[parameters('tags').BusinessService]",
+        "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
+        "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
+        "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
+      },
+      "properties": {
+        "ipConfigurations": [
+          {
+            "name": "ipconfig1",
+            "properties": {
+              "privateIPAllocationMethod": "Dynamic",
+              "subnet": {
+                "id": "[variables('subnetRef')]"
+              }
+            }
+          }
+        ],
+        "dnsSettings": {
+          "dnsServers": []
+        },
+        "enableIPForwarding": false
+      }
+    },
+    {
+      "type": "Microsoft.Compute/virtualMachines",
+      "name": "[parameters('virtualMachine').Name]",
+      "apiVersion": "2016-04-30-preview",
+      "location": "[parameters('vmLocation')]",
+      "dependsOn": [
+        "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
+      ],
+      "tags": {
+        "DisplayName": "VirtualMachine",
+        "AutoShutdownSchedule": "[parameters('tagAutoShutdownSchedule')]",
+        "AutoRestartSchedule": "[parameters('tagAutoRestartSchedule')]",
+        "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
+        "BusinessService": "[parameters('tags').BusinessService]",
+        "BYOSoftwareLicense": "[parameters('tags').BYOSoftwareLicense]",
+        "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
+        "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
+        "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
+      },
+      "properties": {
+        "hardwareProfile": {
+          "vmSize": "[parameters('virtualMachine').VMSize]"
+        },
+        "availabilitySet": "[if(not(empty(parameters('virtualMachine').AvailabilitySet)), variables('availabilitySet'), json('null'))]",
+        "storageProfile": {
+          "osDisk": {
+            "name": "[parameters('existingVHDName')]",
+            "caching": "ReadWrite",
+            "createOption": "Attach",
+            "vhd": {
+              "uri": "[variables('existingVHDUri')]"
+            },
+            "osType": "Linux"
+          }
+        },
+        "networkProfile": {
+          "networkInterfaces": [
+            {
+              "id": "[resourceId('Microsoft.Network/networkInterfaces',variables('nicName'))]"
+            }
+          ]
+        },
+        "diagnosticsProfile": {
+          "bootDiagnostics": {
+            "enabled": true,
+            "storageUri": "[concat(reference(concat('Microsoft.Storage/storageAccounts/', parameters('diagStorageAccountName')), '2016-01-01').primaryEndpoints.blob)]"
+          }
+        }
+      },
+      "resources": [
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]"
+          ],
+          "condition": "[greater(length(parameters('workspaceId')),6)]",
+          "type": "extensions",
+          "name": "OMSExtension",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "properties": {
+            "publisher": "Microsoft.EnterpriseCloud.Monitoring",
+            "type": "OmsAgentForLinux",
+            "typeHandlerVersion": "1.0",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "workspaceId": "[parameters('workspaceId')]"
+            },
+            "protectedSettings": {
+              "workspaceKey": "[parameters('workspaceKey')]"
+            }
+          }
+        },
+        {
+          "type": "extensions",
+          "name": "NetworkWatcherAgent",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.Azure.NetworkWatcher",
+            "type": "NetworkWatcherAgentLinux",
+            "typeHandlerVersion": "1.4",
+            "autoUpgradeMinorVersion": true
+          }
+        },
+        {
+          "type": "extensions",
+          "name": "LinuxDiagnostic",
+          "apiVersion": "2015-05-01-preview",
+          "location": "[parameters('vmLocation')]",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]"
+          ],
+          "properties": {
+            "publisher": "Microsoft.OSTCExtensions",
+            "type": "LinuxDiagnostic",
+            "typeHandlerVersion": "[parameters('diagExtensionVersion')]",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "xmlCfg": "[base64(variables('wadcfgx'))]",
+              "StorageAccount": "[parameters('diagStorageAccountName')]"
+            },
+            "protectedSettings": {
+              "storageAccountName": "[parameters('diagStorageAccountName')]",
+              "storageAccountKey": "[listKeys(variables('accountid'),'2015-05-01-preview').key1]",
+              "storageAccountEndPoint": "https://core.windows.net/"
+            }
+          }
+        },
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('virtualMachine').Name, 'OMSExtension')]"
+          ],
+          "condition": "[not(empty(parameters('keyVaultSecretUrl')))]",
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(parameters('virtualMachine').Name,'/', 'AzureDiskEncryptionForLinux')]",
+          "apiVersion": "2016-04-30-preview",
+          "location": "[parameters('vmLocation')]",
+          "properties": {
+            "publisher": "Microsoft.Azure.Security",
+            "type": "AzureDiskEncryptionForLinux",
+            "typeHandlerVersion": "0.1",
+            "autoUpgradeMinorVersion": true,
+            "forceUpdateTag": "[parameters('sequenceVersion')]",
+            "settings": {
+              "AADClientID": "[parameters('aadClientID')]",
+              "KeyVaultURL": "[variables('keyVaultURL')]",
+              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+              "VolumeType": "[parameters('volumeType')]",
+              "EncryptionOperation": "EnableEncryption"
+            },
+            "protectedSettings": {
+              "AADClientSecret": "[parameters('aadClientSecret')]"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "[concat(parameters('virtualMachine').Name,'.updatevm')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('virtualMachine').Name, 'AzureDiskEncryptionForLinux')]"
+      ],
+      "condition": "[not(empty(parameters('keyVaultSecretUrl')))]",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('virtualMachine').Name]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+          "keyVaultResourceID": {
+            "value": "[parameters('keyVaultResourceID')]"
+          },
+          "keyVaultSecretUrl": {
+            "value": "[parameters('keyVaultSecretUrl')]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
+          }
+        }
+      }
+    }
+  ]
+}
