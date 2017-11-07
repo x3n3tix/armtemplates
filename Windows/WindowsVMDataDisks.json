@@ -391,26 +391,6 @@
       },
       "resources": [
         {
-          "type":"extensions",
-          "name":"InitialiseDisks",
-          "apiVersion": "[variables('api-version')]",
-          "location": "[parameters('vmLocation')]",
-          "dependsOn":[
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
-          ],
-          "properties":{
-            "publisher":"Microsoft.Compute",
-            "type":"CustomScriptExtension",
-            "typeHandlerVersion":"1.9",
-            "settings":{
-              "fileUris":[
-                "https://github.com/x3n3tix/armtemplates/raw/dev/InitialiseDataDisks.ps1"
-              ],
-              "commandToExecute":"powershell -ExecutionPolicy Unrestricted -file InitialiseDataDisks.ps1"
-            }
-          }
-        },
-        {
           "dependsOn": [
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
