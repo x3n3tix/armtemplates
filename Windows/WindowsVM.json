@@ -217,6 +217,41 @@
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
+    },
+    "domainJoinUserName": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Domain NetBiosName plus User name of a domain user with sufficient rights to perfom domain join operation. E.g. domain\\username"
+      }
+    },
+    "domainJoinPassword": {
+      "type": "securestring",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Domain user password"
+      }
+    },
+    "domainFQDN": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Domain FQDN where the virtual machine will be joined"
+      }
+    },
+    "ouPath": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: OU=testOU; DC=domain; DC=Domain; DC=com"
+      }
+    },
+    "joinDomain": {
+      "type": "bool",
+      "defaultValue": true,
+      "metadata": {
+        "description": "Flag to determine whether to join VM to domain. Default is 'true'."
+      }
     }
   },
   "variables": {
@@ -288,7 +323,8 @@
       }
     },
     "imageConfig": "[variables('imageUsed')[string(not(empty(parameters('osImage'))))]]",
-    "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]"
+    "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]",
+    "domainJoinOptions": 3
   },
   "resources": [
     {
@@ -355,6 +391,14 @@
             "diskSizeGB": "[if(not(empty(parameters('osDiskSize'))), parameters('osDiskSize'), json('null'))]",
             "managedDisk": {
               "storageAccountType": "[parameters('storageType')]"
+            },
+            "tags": {
+              "DisplayName": "OSDisk",
+              "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
+              "BusinessService": "[parameters('tags').BusinessService]",
+              "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
+              "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
+              "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
             }
           }
         },
@@ -397,6 +441,34 @@
           }
         },
         {
+          "comments": "Join domain - JsonADDomainExtension",
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('virtualMachine').Name, 'OMSExtension')]"
+          ],
+          "condition": "[equals(parameters('joinDomain'), bool('true'))]",
+          "type": "extensions",
+          "name": "JoinToDomain",
+          "apiVersion": "[variables('api-version')]",
+          "location": "[parameters('vmLocation')]",
+          "properties": {
+            "publisher": "Microsoft.Compute",
+            "type": "JsonADDomainExtension",
+            "typeHandlerVersion": "1.3",
+            "autoUpgradeMinorVersion": true,
+            "settings": {
+              "Name": "[parameters('domainFQDN')]",
+              "User": "[parameters('domainJoinUserName')]",
+              "Restart": "true",
+              "Options": "[variables('domainJoinOptions')]",
+              "OUPath": "[parameters('ouPath')]"
+            },
+            "protectedSettings": {
+              "Password": "[parameters('domainJoinPassword')]"
+            }
+          }
+        },
+        {
           "type": "extensions",
           "name": "NetworkWatcherAgent",
           "apiVersion": "[variables('api-version')]",
@@ -420,18 +492,18 @@
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
           ],
           "properties": {
-						"publisher": "Microsoft.Compute",
-						"type": "CustomScriptExtension",
-						"typeHandlerVersion": "1.4",
-						"settings": {
-							"fileUris": [
-								"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/ConfigureWinRM.ps1",
-								"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/makecert.exe",
-								"https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/winrmconf.cmd"
-							],
-							"commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureWinRM.ps1 ',variables('hostDNSNameScriptArgument'))]"
-						}
-					}
+            "publisher": "Microsoft.Compute",
+            "type": "CustomScriptExtension",
+            "typeHandlerVersion": "1.4",
+            "settings": {
+              "fileUris": [
+                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/ConfigureWinRM.ps1",
+                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/makecert.exe",
+                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/winrmconf.cmd"
+              ],
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureWinRM.ps1 ',variables('hostDNSNameScriptArgument'))]"
+            }
+          }
         },
         {
           "type": "extensions",
