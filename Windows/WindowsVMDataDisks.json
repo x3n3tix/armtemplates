@@ -390,14 +390,6 @@
             "diskSizeGB": "[if(not(empty(parameters('osDiskSize'))), parameters('osDiskSize'), json('null'))]",
             "managedDisk": {
               "storageAccountType": "[parameters('storageType')]"
-            },
-            "tags": {
-              "DisplayName": "OSDisk",
-              "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
-              "BusinessService": "[parameters('tags').BusinessService]",
-              "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
-              "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
-              "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
             }
           },
           "copy": [
