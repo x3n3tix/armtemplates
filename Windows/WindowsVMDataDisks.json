@@ -323,7 +323,8 @@
       }
     },
     "imageConfig": "[variables('imageUsed')[string(not(empty(parameters('osImage'))))]]",
-    "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]"
+    "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]",
+    "domainJoinOptions": 3
   },
   "resources": [
     {
