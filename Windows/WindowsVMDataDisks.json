@@ -458,8 +458,8 @@
         {
           "comments": "Join domain - JsonADDomainExtension",
           "dependsOn": [
-            "[concat('Microsoft.Compute/virtualMachines/', parameters('virtualMachine').Name)]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('virtualMachine').Name, 'OMSExtension')]"
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'OMSExtension')]"
           ],
           "condition": "[equals(parameters('joinDomain'), bool('true'))]",
           "type": "extensions",
