@@ -248,7 +248,7 @@
     },
     "joinDomain": {
       "type": "bool",
-      "defaultValue": true,
+      "defaultValue": false,
       "metadata": {
         "description": "Flag to determine whether to join VM to domain. Default is 'true'."
       }
