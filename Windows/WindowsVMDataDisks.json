@@ -247,8 +247,8 @@
       }
     },
     "joinDomain": {
-      "type": "bool",
-      "defaultValue": false,
+      "type": "string",
+      "defaultValue": "false",
       "metadata": {
         "description": "Flag to determine whether to join VM to domain. Default is 'true'."
       }
@@ -462,7 +462,7 @@
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
             "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'OMSExtension')]"
           ],
-          "condition": "[equals(parameters('joinDomain'), bool('true'))]",
+          "condition": "[equals(bool(parameters('joinDomain')), bool('true'))]",
           "type": "extensions",
           "name": "JoinToDomain",
           "apiVersion": "[variables('api-version')]",
@@ -474,7 +474,7 @@
             "autoUpgradeMinorVersion": true,
             "settings": {
               "Name": "[parameters('domainFQDN')]",
-              "User": "[parameters('domainJoinUserName')]",
+              "User": "[concat(parameters('domainFQDN'),'\\',parameters('domainJoinUserName'))]",
               "Restart": "true",
               "Options": "[variables('domainJoinOptions')]",
               "OUPath": "[parameters('ouPath')]"
