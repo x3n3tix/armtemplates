@@ -323,7 +323,6 @@
       }
     },
     "imageConfig": "[variables('imageUsed')[string(not(empty(parameters('osImage'))))]]",
-    "hostDNSNameScriptArgument": "[concat('*.',resourceGroup().location,'.cloudapp.azure.com')]",
     "domainJoinOptions": 3
   },
   "resources": [
@@ -493,7 +492,7 @@
                 "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/makecert.exe",
                 "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/winrmconf.cmd"
               ],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureWinRM.ps1 ',variables('hostDNSNameScriptArgument'))]"
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureWinRM.ps1 ',parameters('vmName'))]"
             }
           }
         },
