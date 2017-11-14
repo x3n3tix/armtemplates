@@ -31,13 +31,6 @@
         "description": "Number of simultaneous VMs to deploy per batch (Default = 50)."
       }
     },
-    "osImage": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Link to existing OS Image to use for VM"
-      }
-    },
     "osDiskSize": {
       "type": "string",
       "defaultValue": "",
@@ -153,34 +146,6 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "osPublisher": {
-      "type": "string",
-      "defaultValue": "MicrosoftWindowsServer",
-      "metadata": {
-        "description": "OS Publisher of Marketplace image."
-      }
-    },
-    "osOffer": {
-      "type": "string",
-      "defaultValue": "WindowsServer",
-      "metadata": {
-        "description": "Offer of Marketplace image."
-      }
-    },
-    "osSKU": {
-      "type": "string",
-      "defaultValue": "2012-R2-Datacenter",
-      "metadata": {
-        "description": "SKU to use for Marketplace image"
-      }
-    },
-    "osVersion": {
-      "type": "string",
-      "defaultValue": "latest",
-      "metadata": {
-        "description": "Version to use for Marketplace image"
-      }
-    },
     "storageSASToken": {
       "type": "securestring"
     },
@@ -203,13 +168,6 @@
       "defaultValue": "",
       "metadata": {
         "description": "Domain FQDN where the virtual machine will be joined"
-      }
-    },
-    "ouPath": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: OU=testOU; DC=domain; DC=Domain; DC=com"
       }
     }
   },
@@ -250,7 +208,28 @@
             "value": "[parameters('virtualMachines')[copyIndex()].AvailabilitySet]"
           },
           "dataDisks": {
-            "value": "[array(parameters('virtualMachines')[copyIndex()].DataDisks)]"
+            "value": "[parameters('virtualMachines')[copyIndex()].DataDisks]"
+          },
+          "osImage": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSImage]"
+          },
+          "osPublisher": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSPublisher]"
+          },
+          "osOffer": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSOffer]"
+          },
+          "osSKU": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSSKU]"
+          },
+          "osVersion": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSVersion]"
+          },
+          "ouPath": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OUPath]"
+          },
+          "joinDomain": {
+            "value": "[parameters('virtualMachines')[copyIndex()].JoinDomain]"
           },
           "tagAutoShutdownSchedule": {
             "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule)]"
@@ -263,9 +242,6 @@
           },
           "vmLocation": {
             "value": "[parameters('vmLocation')]"
-          },
-          "osImage": {
-            "value": "[parameters('osImage')]"
           },
           "existingVirtualNetworkName": {
             "value": "[parameters('existingVirtualNetworkName')]"
@@ -318,18 +294,6 @@
           "scriptCommand": {
             "value": "[parameters('scriptCommand')]"
           },
-          "osPublisher": {
-            "value": "[parameters('osPublisher')]"
-          },
-          "osOffer": {
-            "value": "[parameters('osOffer')]"
-          },
-          "osSKU": {
-            "value": "[parameters('osSKU')]"
-          },
-          "osVersion": {
-            "value": "[parameters('osVersion')]"
-          },
           "storageSASToken": {
             "value": "[parameters('storageSASToken')]"
           },
@@ -341,12 +305,6 @@
           },
           "domainFQDN": {
             "value": "[parameters('domainFQDN')]"
-          },
-          "ouPath": {
-            "value": "[parameters('ouPath')]"
-          },
-          "joinDomain": {
-            "value": "[parameters('virtualMachines')[copyIndex()].JoinDomain]"
           }
         }
       }
