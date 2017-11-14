@@ -196,24 +196,28 @@
     },
     "osPublisher": {
       "type": "string",
+      "defaultValue": "MicrosoftWindowsServer",
       "metadata": {
         "description": "OS Publisher of Marketplace image."
       }
     },
     "osOffer": {
       "type": "string",
+      "defaultValue": "WindowsServer",
       "metadata": {
         "description": "Offer of Marketplace image."
       }
     },
     "osSKU": {
       "type": "string",
+      "defaultValue": "2012-R2-Datacenter",
       "metadata": {
         "description": "SKU to use for Marketplace image"
       }
     },
     "osVersion": {
       "type": "string",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }

@@ -182,24 +182,28 @@
     },
     "osPublisher": {
       "type": "string",
+      "defaultValue": "RedHat",
       "metadata": {
         "description": "OS Publisher of Marketplace image."
       }
     },
     "osOffer": {
       "type": "string",
+      "defaultValue": "RHEL",
       "metadata": {
         "description": "Offer of Marketplace image."
       }
     },
     "osSKU": {
       "type": "string",
+      "defaultValue": "7-LVM",
       "metadata": {
         "description": "SKU to use for Marketplace image"
       }
     },
     "osVersion": {
       "type": "string",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
