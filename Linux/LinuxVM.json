@@ -200,6 +200,7 @@
     },
     "osVersion": {
       "type": "string",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
