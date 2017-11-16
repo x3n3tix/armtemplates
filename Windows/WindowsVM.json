@@ -247,7 +247,7 @@
       "type": "string",
       "defaultValue": "",
       "metadata": {
-        "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: OU=testOU; DC=domain; DC=Domain; DC=com"
+        "description": "Specifies an organizational unit (OU) for the domain account. Enter the full distinguished name of the OU in quotation marks. Example: OU=testOU,DC=domain,DC=Domain,DC=com"
       }
     },
     "joinDomain": {
@@ -441,7 +441,7 @@
             "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
             "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'OMSExtension')]"
           ],
-          "condition": "[equals(bool(parameters('joinDomain')), bool('true'))]",
+          "condition": "[equals(toLower(parameters('joinDomain')), 'true')]",
           "type": "extensions",
           "name": "JoinToDomain",
           "apiVersion": "[variables('api-version')]",
