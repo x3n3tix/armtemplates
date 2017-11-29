@@ -536,7 +536,7 @@
             "typeHandlerVersion": "1.4",
             "settings": {
               "fileUris": [
-                "[concat('https://azusydgit.blob.core.windows.net/templates/ConfigureRemotingForAnsible.ps1',parameters('storageSASToken'))]"
+                "https://raw.githubusercontent.com/x3n3tix/armtemplates/dev/ConfigureRemotingForAnsible.ps1"
               ],
               "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureRemotingForAnsible.ps1 ',parameters('vmName'))]"
             }
