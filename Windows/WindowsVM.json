@@ -327,7 +327,12 @@
       }
     },
     "imageConfig": "[variables('imageUsed')[string(not(empty(parameters('osImage'))))]]",
-    "domainJoinOptions": 3
+    "domainJoinOptions": 3,
+    "loadBalancerBackendAddressPools": [
+      {
+        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancer')), '/backendAddressPools/', parameters('backendPool'))]"
+      }
+    ]
   },
   "resources": [
     {
@@ -351,7 +356,8 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('subnetRef')]"
-              }
+              },
+              "loadBalancerBackendAddressPools": "[if(not(empty(parameters('backendPool'))), variables('loadBalancerBackendAddressPools'), json('null'))]"
             }
           }
         ],

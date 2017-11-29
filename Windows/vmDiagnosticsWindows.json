@@ -19,7 +19,10 @@
       "metadata": {
         "description": "Resource group for the VM Diagnostics Storage Account."
       }
-    }
+    },
+		"vmLocation": {
+			"type": "string"
+		}
   },
   "variables": {
     "accountid": "[concat('/subscriptions/',subscription().subscriptionId,'/resourceGroups/',parameters('vmDiagStorageResourceGroup'),'/providers/Microsoft.Storage/storageAccounts/', parameters('vmDiagStorageAccountName'))]",
@@ -34,7 +37,7 @@
       "type": "Microsoft.Compute/virtualMachines/extensions",
       "name": "[concat(parameters('vmName'),'/Microsoft.Insights.VMDiagnosticsSettings')]",
       "apiVersion": "2015-05-01-preview",
-      "location": "[resourceGroup().location]",
+      "location": "[if(empty(parameters('vmLocation')), resourceGroup().location, parameters('vmLocation'))]",
       "properties": {
         "publisher": "Microsoft.Azure.Diagnostics",
         "type": "IaaSDiagnostics",
