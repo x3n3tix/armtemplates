@@ -237,6 +237,12 @@
           "tagAutoRestartSchedule": {
             "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoRestartSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoRestartSchedule)]"
           },
+          "loadBalancer": {
+            "value": "[parameters('virtualMachines')[copyIndex()].LoadBalancer]"
+          },
+          "backendPool": {
+            "value": "[parameters('virtualMachines')[copyIndex()].BackendPool]"
+          },
           "tags": {
             "value": "[parameters('tags')]"
           },
