@@ -512,11 +512,9 @@
             "typeHandlerVersion": "1.4",
             "settings": {
               "fileUris": [
-                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/ConfigureWinRM.ps1",
-                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/makecert.exe",
-                "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/201-vm-winrm-windows/winrmconf.cmd"
+                "[concat('https://azusydgit.blob.core.windows.net/templates/ConfigureRemotingForAnsible.ps1',parameters('storageSASToken'))]"
               ],
-              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureWinRM.ps1 ',parameters('vmName'))]"
+              "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -file ConfigureRemotingForAnsible.ps1 ',parameters('vmName'))]"
             }
           }
         },
