@@ -256,20 +256,6 @@
       "metadata": {
         "description": "Flag to determine whether to join VM to domain. Default is 'true'."
       }
-    },
-    "loadBalancer": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Name of the Load Balancer to attach NIC to."
-      }
-    },
-    "backendPool": {
-      "type": "string",
-      "defaultValue": "",
-      "metadata": {
-        "description": "Name of the Backend Address Pool to use."
-      }
     }
   },
   "variables": {
@@ -341,12 +327,7 @@
       }
     },
     "imageConfig": "[variables('imageUsed')[string(not(empty(parameters('osImage'))))]]",
-    "domainJoinOptions": 3,
-    "loadBalancerBackendAddressPools": [
-      {
-        "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancer')), '/backendAddressPools/', parameters('backendPool'))]"
-      }
-    ]
+    "domainJoinOptions": 3
   },
   "resources": [
     {
@@ -370,8 +351,7 @@
               "privateIPAllocationMethod": "Dynamic",
               "subnet": {
                 "id": "[variables('subnetRef')]"
-              },
-              "loadBalancerBackendAddressPools": "[if(not(empty(parameters('backendPool'))), variables('loadBalancerBackendAddressPools'), json('null'))]"
+              }
             }
           }
         ],
