@@ -395,7 +395,31 @@
             "managedDisk": {
               "storageAccountType": "[parameters('storageType')]"
             }
-          }
+          },
+          "copy": [
+            {
+              "name": "dataDisks",
+              "count": "[length(parameters('dataDisks'))]",
+              "input": {
+                "lun": "[copyIndex('dataDisks')]",
+                "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')][0]]",
+                "createOption": "Empty",
+                "caching": "ReadWrite",
+                "managedDisk": {
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
+                }
+              },
+              "tags": {
+                "DisplayName": "DataDisk",
+                "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
+                "BusinessService": "[parameters('tags').BusinessService]",
+                "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
+                "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
+                "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
+              }
+            }
+          ]
         },
         "osProfile": "[variables('windowsConfig')]",
         "networkProfile": {

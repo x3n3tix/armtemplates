@@ -11,78 +11,62 @@
     "vmLocation": {
       "type": "string",
       "metadata": {
-        "description": "Location of the resource" 
+        "description": "Location of the resource"
       }
     },
     "extensionPublisher": {
       "type": "string",
       "metadata": {
-        "description": "Name of the extension publisher" 
+        "description": "Name of the extension publisher"
       }
     },
     "extensionVersion": {
       "type": "string",
       "metadata": {
-        "description": "Version of the extension" 
+        "description": "Version of the extension"
       }
     },
-	"scriptUri": {
-	  "type": "string",
-	  "metadata": {
-		"description": "Url of the custom script to be run."
-	  }
-	},
-	"scriptName": {
-	  "type": "string",
-	  "metadata": {
-		"description": "Name of the custom script to be run."
-	  }
-	},
-	"scriptParameters": {
-	  "type": "string",
-	  "defaultValue": "",
-	  "metadata": {
-		"description": "Name of the custom script to be run."
-	  }
-	},
-	"storageAccountKey": {
-	  "type": "securestring",
-	  "metadata": {
-		"description": "Storage access key for accessing storage account that script is stored in"
-	  }
-	},
-	"storageAccountName": {
-	  "type": "string",
-	  "metadata": {
-		"description": "SAS Token for accessing script"
-	  }
-	}
+    "scriptUri": {
+      "type": "string",
+      "metadata": {
+        "description": "Url of the custom script to be run."
+      }
+    },
+    "scriptName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the custom script to be run."
+      }
+    },
+    "scriptCommand": {
+      "type": "string",
+      "defaultValue": "",
+      "metadata": {
+        "description": "Command to run with custom script"
+      }
+    }
   },
   "variables": {
-	"extensionName": "CustomScriptExtension"
+    "extensionName": "CustomScriptExtension"
   },
   "resources": [
     {
-	  "type": "Microsoft.Compute/virtualMachines/extensions",
-	  "name": "[concat(parameters('vmName'),'/', variables('extensionName'))]",
-	  "apiVersion": "2015-06-15",
-	  "location": "[resourceGroup().location]",
-	  "properties": {
-		"publisher": "[parameters('extensionPublisher')]",
-		"type": "CustomScriptExtension",
-		"typeHandlerVersion": "[parameters('extensionVersion')]",
-		"autoUpgradeMinorVersion": true,
-		"settings": {
-		  "fileUris": [
-			"[concat(parameters('scriptUri'), parameters('sasToken'))]"
-		  ]
-		},
-		"protectedSettings": {
-            "commandToExecute": "[concat('powershell -ExecutionPolicy Unrestricted -File ', parameters('scriptName'), ' ', parameters('scriptParameters'))]",
-            "storageAccountName": "[parameters('storageAccountName')]",
-            "storageAccountKey": "[parameters('storageAccountKey')]"
+      "type": "Microsoft.Compute/virtualMachines/extensions",
+      "name": "[concat(parameters('vmName'),'/', variables('extensionName'))]",
+      "apiVersion": "2015-06-15",
+      "location": "[parameters('vmLocation')]",
+      "properties": {
+        "publisher": "[parameters('extensionPublisher')]",
+        "type": "CustomScriptExtension",
+        "typeHandlerVersion": "[parameters('extensionVersion')]",
+        "autoUpgradeMinorVersion": true,
+        "settings": {
+          "fileUris": [
+            "[concat(parameters('scriptUri'), parameters('sasToken'))]"
+          ],
+          "commandToExecute": "[parameters('scriptCommand')]"
         }
-	  }
-	}
+      }
+    }
   ]
 }

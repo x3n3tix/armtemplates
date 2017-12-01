@@ -1,0 +1,40 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "nsgName": {
+      "type": "string",
+      "metadata": {
+        "description": "This is name of the networkSecurityGroup that will be assigned to FrontEnd Subnet"
+      }
+    },
+	"nsgRules": {
+      "type": "array",
+      "metadata": {
+        "description": "The security rules for network traffic."
+      }
+    },
+	"location": {
+	  "type": "string",
+	  "allowedValues": [
+        "Australia East",
+        "Australia Southeast",
+		"West US 2"
+      ],
+	  "metadata": {
+		"description": "Location to deploy the NSG."
+	  }
+	}
+  },
+  "resources": [
+    {
+      "apiVersion": "2015-05-01-preview",
+      "type": "Microsoft.Network/networkSecurityGroups",
+      "name": "[parameters('nsgName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "securityRules": "[parameters('nsgRules')]"
+      }
+    }
+  ]
+}

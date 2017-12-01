@@ -12,8 +12,11 @@
       "type": "string",
       "allowedValues": [
         "Australia East",
+        "australiaeast",
         "Australia Southeast",
-        "West US 2"
+        "australiasoutheast",
+        "West US 2",
+        "westus2"
       ],
       "metadata": {
         "description": "Location to deploy NIC, VM and its extensions"
@@ -21,11 +24,11 @@
     },
     "batchSize": {
       "type": "int",
-      "defaultValue": 10,
+      "defaultValue": 50,
       "minValue": 1,
-      "maxValue": 10,
+      "maxValue": 50,
       "metadata": {
-        "description": "Number of simultaneous VMs to deploy per batch (Default = 10)."
+        "description": "Number of simultaneous VMs to deploy per batch (Default = 50)."
       }
     },
     "osImage": {
@@ -40,13 +43,6 @@
       "defaultValue": "",
       "metadata": {
         "description": "Size of the OS Disk (in GB)"
-      }
-    },
-    "storageType": {
-      "type": "string",
-      "defaultValue": "Premium_LRS",
-      "metadata": {
-        "description": "Storage type for VM (ie. Standard_LRS, Premium_LRS, etc.)"
       }
     },
     "existingVirtualNetworkName": {
@@ -80,6 +76,10 @@
     "adminPassword": {
       "type": "securestring"
     },
+    "sshKeyData": {
+      "type": "string",
+      "defaultValue": ""
+    },
     "diagStorageAccountName": {
       "type": "string",
       "metadata": {
@@ -91,6 +91,7 @@
       "defaultValue": "2.3",
       "metadata": {
         "description": "Version of the VM Diagnostics extension (ie. 1.5 for Windows or 2.3 for Linux)"
+<<<<<<< HEAD
       }
     },
     "aadClientID": {
@@ -164,32 +165,14 @@
       "type": "string",
       "metadata": {
         "description": "Tags used for identifying Business Service for resources"
+=======
+>>>>>>> dev
       }
     },
-    "BYOSoftwareLicense": {
-      "type": "string",
-      "defaultValue": "N/A",
+    "tags": {
+      "type": "object",
       "metadata": {
-        "description": "Tags used for Software Licensing requirements of resource"
-      }
-    },
-    "ProjectIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for identifying ACC Project code"
-      }
-    },
-    "ResourceEndDate": {
-      "type": "string",
-      "defaultValue": "N/A",
-      "metadata": {
-        "description": "Tags used for indicating likley termination date of resource"
-      }
-    },
-    "SupportIdentifier": {
-      "type": "string",
-      "metadata": {
-        "description": "Tags used for support of resources"
+        "description": "Object with list of tags to add onto the NIC and VM"
       }
     },
     "workspaceId": {
@@ -210,13 +193,6 @@
         "description": "OMS workspace key"
       }
     },
-    "sasToken": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
-      }
-    },
     "scriptUri": {
       "type": "string",
       "defaultValue": "",
@@ -231,25 +207,11 @@
         "description": "Name of the custom script to be run."
       }
     },
-    "scriptParameters": {
+    "scriptCommand": {
       "type": "string",
       "defaultValue": "",
       "metadata": {
         "description": "Name of the custom script to be run."
-      }
-    },
-    "scriptStorageAccountKey": {
-      "type": "securestring",
-      "defaultValue": "",
-      "metadata": {
-        "description": "SAS Token for accessing private source control"
-      }
-    },
-    "branch": {
-      "type": "string",
-      "defaultValue": "prod",
-      "metadata": {
-        "description": "Defines which branch to access the linked template script."
       }
     },
     "osPublisher": {
@@ -275,28 +237,17 @@
     },
     "osVersion": {
       "type": "string",
-      "defaultValue": "7.3.2017091115",
+      "defaultValue": "latest",
       "metadata": {
         "description": "Version to use for Marketplace image"
       }
+    },
+    "storageSASToken": {
+      "type": "securestring"
     }
   },
   "variables": {
-    "vmCount": "[length(parameters('virtualMachines'))]",
-    "useAvailabilitySet": {
-      "true": "AVS",
-      "false": ""
-    },
-    "useCustomImage": {
-      "true": "Custom",
-      "false": ""
-    },
-    "osImageRef": "[variables('useCustomImage')[string(equals(equals(parameters('osImage'),''),bool('false')))]]",
-    "batchSizeOutput": {
-      "True": "[length(parameters('virtualMachines'))]",
-      "False": "[parameters('batchSize')]"
-    },
-    "batchSizeFinal": "[variables('batchSizeOutput')[string(greater(parameters('batchSize'),length(parameters('virtualMachines'))))]]"
+    "vmCount": "[length(parameters('virtualMachines'))]"
   },
   "resources": [
     {
@@ -307,35 +258,47 @@
         "name": "virtualMachinesCopy",
         "count": "[variables('vmCount')]",
         "mode": "serial",
-        "batchSize": "[variables('batchSizeFinal')]"
+        "batchSize": "[if(greater(parameters('batchSize'),variables('vmCount')), variables('vmCount'), parameters('batchSize'))]"
       },
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://raw.githubusercontent.com/x3n3tix/armtemplates/',parameters('branch'),'/Linux/LinuxVM',variables('osImageRef'),variables('useAvailabilitySet')[string(equals(equals(parameters('virtualMachines')[copyIndex()]['AvailabilitySet'],''),bool('false')))],'.json')]",
+          "uri": "[concat('https://azusydgit.blob.core.windows.net/templates/LinuxVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDisks'])), 'DataDisks', ''),'.json',parameters('storageSASToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['Name']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].Name]"
           },
           "vmSize": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['Size']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].VMSize]"
+          },
+          "osDiskSize": {
+            "value": "[parameters('virtualMachines')[copyIndex()].OSDiskSize]"
+          },
+          "storageType": {
+            "value": "[parameters('virtualMachines')[copyIndex()].StorageType]"
           },
           "availabilitySet": {
-            "value": "[parameters('virtualMachines')[copyIndex()]['AvailabilitySet']]"
+            "value": "[parameters('virtualMachines')[copyIndex()].AvailabilitySet]"
+          },
+          "dataDisks": {
+            "value": "[array(parameters('virtualMachines')[copyIndex()].DataDisks)]"
+          },
+          "tagAutoShutdownSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoShutdownSchedule)]"
+          },
+          "tagAutoRestartSchedule": {
+            "value": "[if(empty(parameters('virtualMachines')[copyIndex()].AutoRestartSchedule), 'N/A', parameters('virtualMachines')[copyIndex()].AutoRestartSchedule)]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
           },
           "vmLocation": {
             "value": "[parameters('vmLocation')]"
           },
           "osImage": {
             "value": "[parameters('osImage')]"
-          },
-          "osDiskSize": {
-            "value": "[parameters('osDiskSize')]"
-          },
-          "storageType": {
-            "value": "[parameters('storageType')]"
           },
           "existingVirtualNetworkName": {
             "value": "[parameters('existingVirtualNetworkName')]"
@@ -346,8 +309,8 @@
           "subnetName": {
             "value": "[parameters('subnetName')]"
           },
-          "nicName": {
-            "value": "[concat(parameters('virtualMachines')[copyIndex()]['Name'],'-NIC-',parameters('nicSuffix'))]"
+          "nicSuffix": {
+            "value": "[parameters('nicSuffix')]"
           },
           "adminUserName": {
             "value": "[parameters('adminUserName')]"
@@ -355,53 +318,14 @@
           "adminPassword": {
             "value": "[parameters('adminPassword')]"
           },
+          "sshKeyData": {
+            "value": "[parameters('sshKeyData')]"
+          },
           "diagStorageAccountName": {
             "value": "[parameters('diagStorageAccountName')]"
           },
-          "aadClientID": {
-            "value": "[parameters('aadClientID')]"
-          },
-          "aadClientSecret": {
-            "value": "[parameters('aadClientSecret')]"
-          },
-          "keyVaultName": {
-            "value": "[parameters('keyVaultName')]"
-          },
-          "keyVaultResourceGroup": {
-            "value": "[parameters('keyVaultResourceGroup')]"
-          },
-          "keyEncryptionKeyURL": {
-            "value": "[parameters('keyEncryptionKeyURL')]"
-          },
-          "volumeType": {
-            "value": "[parameters('volumeType')]"
-          },
-          "sequenceVersion": {
-            "value": "[parameters('sequenceVersion')]"
-          },
-          "BillingIdentifier": {
-            "value": "[parameters('BillingIdentifier')]"
-          },
-          "ProjectIdentifier": {
-            "value": "[parameters('ProjectIdentifier')]"
-          },
-          "AutoShutdownSchedule": {
-            "value": "[parameters('AutoShutdownSchedule')]"
-          },
-          "AutoRestartSchedule": {
-            "value": "[parameters('AutoRestartSchedule')]"
-          },
-          "BusinessService": {
-            "value": "[parameters('BusinessService')]"
-          },
-          "ResourceEndDate": {
-            "value": "[parameters('ResourceEndDate')]"
-          },
-          "BYOSoftwareLicense": {
-            "value": "[parameters('BYOSoftwareLicense')]"
-          },
-          "SupportIdentifier": {
-            "value": "[parameters('SupportIdentifier')]"
+          "diagExtensionVersion": {
+            "value": "[parameters('diagExtensionVersion')]"
           },
           "workspaceId": {
             "value": "[parameters('workspaceId')]"
@@ -418,14 +342,8 @@
           "scriptName": {
             "value": "[parameters('scriptName')]"
           },
-          "scriptParameters": {
-            "value": "[parameters('scriptParameters')]"
-          },
-          "scriptStorageAccountKey": {
-            "value": "[parameters('scriptStorageAccountKey')]"
-          },
-          "sasToken": {
-            "value": "[parameters('sasToken')]"
+          "scriptCommand": {
+            "value": "[parameters('scriptCommand')]"
           },
           "osPublisher": {
             "value": "[parameters('osPublisher')]"
@@ -438,6 +356,9 @@
           },
           "osVersion": {
             "value": "[parameters('osVersion')]"
+          },
+          "storageSASToken": {
+            "value": "[parameters('storageSASToken')]"
           }
         }
       }
