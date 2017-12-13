@@ -274,14 +274,7 @@
       "name": "[variables('nicName')]",
       "apiVersion": "[variables('api-version')]",
       "location": "[parameters('vmLocation')]",
-      "tags": {
-        "DisplayName": "PrivateIPAddress",
-        "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
-        "BusinessService": "[parameters('tags').BusinessService]",
-        "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
-        "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
-        "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
-      },
+      "tags": "[parameters('tags')]",
       "properties": {
         "ipConfigurations": [
           {
@@ -309,17 +302,7 @@
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
-      "tags": {
-        "DisplayName": "VirtualMachine",
-        "AutoShutdownSchedule": "[parameters('tagAutoShutdownSchedule')]",
-        "AutoRestartSchedule": "[parameters('tagAutoRestartSchedule')]",
-        "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
-        "BusinessService": "[parameters('tags').BusinessService]",
-        "BYOSoftwareLicense": "[parameters('tags').BYOSoftwareLicense]",
-        "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
-        "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
-        "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
-      },
+      "tags": "[parameters('tags')]",
       "properties": {
         "hardwareProfile": {
           "vmSize": "[parameters('vmSize')]"
@@ -350,14 +333,7 @@
                   "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
                 }
               },
-              "tags": {
-                "DisplayName": "DataDisk",
-                "BillingIdentifier": "[parameters('tags').BillingIdentifier]",
-                "BusinessService": "[parameters('tags').BusinessService]",
-                "ProjectIdentifier": "[parameters('tags').ProjectIdentifier]",
-                "ResourceEndDate": "[parameters('tags').ResourceEndDate]",
-                "SupportIdentifier": "[parameters('tags').SupportIdentifier]"
-              }
+              "tags": "[parameters('tags')]"
             }
           ]
         },
@@ -394,7 +370,7 @@
           "properties": {
             "publisher": "Microsoft.EnterpriseCloud.Monitoring",
             "type": "OmsAgentForLinux",
-            "typeHandlerVersion": "1.0",
+            "typeHandlerVersion": "1.4",
             "autoUpgradeMinorVersion": true,
             "settings": {
               "workspaceId": "[parameters('workspaceId')]"
