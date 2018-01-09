@@ -10,6 +10,9 @@
       },
       "privateIp": {
         "type": "string"
+      },
+      "tags": {
+        "type": "object"
       }
   },
   "resources": [
@@ -20,6 +23,7 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
       ],
+      "tags": "[parameters('tags')]",
       "properties": {
         "ipConfigurations": [
           {
