@@ -426,6 +426,9 @@
           },
           "privateIp": {
             "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
+          },
+          "tags": {
+            "value": "[parameters('tags')]"
           }
         }
       }
