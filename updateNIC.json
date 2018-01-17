@@ -11,8 +11,14 @@
     "privateIp": {
       "type": "string"
     },
-    "tags": {
-      "type": "object"
+    "BillingIdentifier": {
+      "value": "[parameters('tags').BillingIdentifier]"
+    },
+    "BusinessService": {
+      "value": "[parameters('tags').BusinessService]"
+    },
+    "Environment": {
+      "value": "[parameters('tags').Environment]"
     }
   },
   "resources": [
@@ -23,7 +29,11 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
       ],
-      "tags": "[parameters('tags')]",
+      "tags": {
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "Environment": "[parameters('Environment')]"
+      },
       "properties": {
         "ipConfigurations": [
           {
