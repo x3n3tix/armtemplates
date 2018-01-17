@@ -12,13 +12,13 @@
       "type": "string"
     },
     "BillingIdentifier": {
-      "value": "[parameters('tags').BillingIdentifier]"
+      "type": "string"
     },
     "BusinessService": {
-      "value": "[parameters('tags').BusinessService]"
+      "type": "string"
     },
     "Environment": {
-      "value": "[parameters('tags').Environment]"
+      "type": "string"
     }
   },
   "resources": [
