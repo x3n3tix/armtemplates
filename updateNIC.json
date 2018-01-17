@@ -1,19 +1,25 @@
-﻿{
+{
   "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-      "nicName": {
-        "type": "string"
-      },
-      "SubnetRef": {
-          "type": "string"
-      },
-      "privateIp": {
-        "type": "string"
-      },
-      "tags": {
-        "type": "object"
-      }
+    "nicName": {
+      "type": "string"
+    },
+    "SubnetRef": {
+      "type": "string"
+    },
+    "privateIp": {
+      "type": "string"
+    },
+    "BillingIdentifier": {
+      "type": "string"
+    },
+    "BusinessService": {
+      "type": "string"
+    },
+    "Environment": {
+      "type": "string"
+    }
   },
   "resources": [
     {
@@ -23,7 +29,11 @@
       "location": "[resourceGroup().location]",
       "dependsOn": [
       ],
-      "tags": "[parameters('tags')]",
+      "tags": {
+        "BillingIdentifier": "[parameters('BillingIdentifier')]",
+        "BusinessService": "[parameters('BusinessService')]",
+        "Environment": "[parameters('Environment')]"
+      },
       "properties": {
         "ipConfigurations": [
           {

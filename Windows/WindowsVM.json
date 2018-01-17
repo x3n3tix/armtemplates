@@ -550,8 +550,14 @@
           "privateIp": {
             "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
           },
-          "tags": {
-            "value": "[parameters('tags')]"
+          "BillingIdentifier": {
+            "value": "[parameters('tags').BillingIdentifier]"
+          },
+          "BusinessService": {
+            "value": "[parameters('tags').BusinessService]"
+          },
+          "Environment": {
+            "value": "[parameters('tags').Environment]"
           }
         }
       }
