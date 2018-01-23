@@ -406,11 +406,11 @@
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')][0]]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].SizeGB",
                 "createOption": "Empty",
-                "caching": "[if(equals(length(parameters('dataDisks')[copyIndex('dataDisks')]),3), parameters('dataDisks')[copyIndex()][2], 'ReadWrite')]",
+                "caching": "[if(not(empty(parameters('dataDisks')[copyIndex()].Caching)), parameters('dataDisks')[copyIndex('dataDisks')].Caching, 'ReadWrite')]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].Type"
                 }
               },
               "tags": "[parameters('tags')]"
