@@ -408,7 +408,7 @@
                 "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
                 "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')][0]]",
                 "createOption": "Empty",
-                "caching": "ReadWrite",
+                "caching": "[if(not(empty(parameters('dataDisks')[copyIndex()][2])), parameters('dataDisks')[copyIndex()][2], 'ReadWrite')]",
                 "managedDisk": {
                   "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
                 }
