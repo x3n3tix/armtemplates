@@ -401,16 +401,16 @@
           },
           "copy": [
             {
-              "name": "dataDisks",
+              "name": "dataDisksCopy",
               "count": "[length(parameters('dataDisks'))]",
               "input": {
-                "lun": "[copyIndex('dataDisks')]",
-                "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].SizeGB]",
+                "lun": "[copyIndex('dataDisksCopy')]",
+                "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisksCopy'))]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisksCopy')].SizeGB]",
                 "createOption": "Empty",
-                "caching": "[if(not(empty(parameters('dataDisks')[copyIndex('dataDisks')].Caching)), parameters('dataDisks')[copyIndex('dataDisks')].Caching, 'ReadWrite')]",
+                "caching": "[if(not(empty(parameters('dataDisks')[copyIndex('dataDisksCopy')].Caching)), parameters('dataDisks')[copyIndex('dataDisksCopy')].Caching, 'ReadWrite')]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].Type]"
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisksCopy')].Type]"
                 }
               },
               "tags": "[parameters('tags')]"
@@ -567,8 +567,14 @@
           "privateIp": {
             "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
           },
-          "tags": {
-            "value": "[parameters('tags')]"
+          "BillingIdentifier": {
+            "value": "[parameters('tags').BillingIdentifier]"
+          },
+          "BusinessService": {
+            "value": "[parameters('tags').BusinessService]"
+          },
+          "Environment": {
+            "value": "[parameters('tags').Environment]"
           }
         }
       }
