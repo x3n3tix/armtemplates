@@ -266,7 +266,12 @@
       {
         "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancer')), '/backendAddressPools/', parameters('backendPool'))]"
       }
-    ]
+    ],
+    "planInformation": {
+      "name": "[parameters('osSKU')]",
+      "publisher": "[parameters('osPublisher')]",
+      "product": "[parameters('osOffer')]"
+    }
   },
   "resources": [
     {
@@ -299,6 +304,7 @@
       "name": "[parameters('vmName')]",
       "apiVersion": "2016-04-30-preview",
       "location": "[parameters('vmLocation')]",
+      "plan": "[if(empty(parameters('osImage')), variables('planInformation'), json('null'))]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
