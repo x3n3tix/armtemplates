@@ -346,7 +346,12 @@
       {
         "id": "[concat(resourceId('Microsoft.Network/loadBalancers', parameters('loadBalancer')), '/backendAddressPools/', parameters('backendPool'))]"
       }
-    ]
+    ],
+    "planInformation": {
+      "name": "[parameters('osSKU')]",
+      "publisher": "[parameters('osPublisher')]",
+      "product": "[parameters('osOffer')]"
+    }
   },
   "resources": [
     {
@@ -379,6 +384,7 @@
       "name": "[parameters('vmName')]",
       "apiVersion": "2016-04-30-preview",
       "location": "[parameters('vmLocation')]",
+      "plan": "[if(empty(parameters('osImage')), variables('planInformation'), json('null'))]",
       "dependsOn": [
         "[concat('Microsoft.Network/networkInterfaces/', variables('nicName'))]"
       ],
@@ -406,11 +412,11 @@
               "input": {
                 "lun": "[copyIndex('dataDisks')]",
                 "name": "[concat(parameters('vmName'), '-VHD-DATADISK-00', copyIndex('dataDisks'))]",
-                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')][0]]",
+                "diskSizeGB": "[parameters('dataDisks')[copyIndex('dataDisks')].SizeGB]",
                 "createOption": "Empty",
-                "caching": "ReadWrite",
+                "caching": "[if(not(empty(parameters('dataDisks')[copyIndex('dataDisks')].Caching)), parameters('dataDisks')[copyIndex('dataDisks')].Caching, 'ReadWrite')]",
                 "managedDisk": {
-                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')][1]]"
+                  "storageAccountType": "[parameters('dataDisks')[copyIndex('dataDisks')].Type]"
                 }
               },
               "tags": "[parameters('tags')]"
@@ -567,8 +573,14 @@
           "privateIp": {
             "value": "[reference(resourceId('Microsoft.Network/networkInterfaces/', variables('nicName'))).ipConfigurations[0].properties.privateIPAddress]"
           },
-          "tags": {
-            "value": "[parameters('tags')]"
+          "BillingIdentifier": {
+            "value": "[parameters('tags').BillingIdentifier]"
+          },
+          "BusinessService": {
+            "value": "[parameters('tags').BusinessService]"
+          },
+          "Environment": {
+            "value": "[parameters('tags').Environment]"
           }
         }
       }
