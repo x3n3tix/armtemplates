@@ -119,65 +119,65 @@
       }
     },
     "aadClientID": {
-			"type": "string",
-			"metadata": {
-				"description": "Client ID of AAD app which has permissions to KeyVault"
-			}
-		},
-		"aadClientSecret": {
-			"type": "securestring",
-			"metadata": {
-				"description": "Client Secret of AAD app which has permissions to KeyVault"
-			}
-		},
-		"keyVaultName": {
-			"type": "string",
-			"metadata": {
-				"description": "Name of the KeyVault to place the volume encryption key"
-			}
-		},
-		"keyVaultResourceGroup": {
-			"type": "string",
-			"metadata": {
-				"description": "Resource group of the KeyVault"
-			}
-		},
-		"keyEncryptionKeyURL": {
-			"type": "string",
-			"metadata": {
-				"description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
-			}
-		},
-		"keyVaultResourceID": {
-			"type": "string",
-			"metadata": {
-				"description": "ID for the keyvault"
-			}
-		},
-		"keyVaultSecretUrl": {
-			"type": "string",
-			"metadata": {
-				"description": "URL to the secret for encryption"
-			}
-		},
-		"volumeType": {
-			"allowedValues": [
-				"OS",
-				"Data",
-				"All"
-			],
-			"type": "string",
-			"metadata": {
-				"description": "Type of the volume OS or Data to perform encryption operation"
-			}
-		},
-		"sequenceVersion": {
-			"defaultValue": "1.0",
-			"type": "string",
-			"metadata": {
-				"description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
-			}
-		},
+      "type": "string",
+      "metadata": {
+        "description": "Client ID of AAD app which has permissions to KeyVault"
+      }
+    },
+    "aadClientSecret": {
+      "type": "securestring",
+      "metadata": {
+        "description": "Client Secret of AAD app which has permissions to KeyVault"
+      }
+    },
+    "keyVaultName": {
+      "type": "string",
+      "metadata": {
+        "description": "Name of the KeyVault to place the volume encryption key"
+      }
+    },
+    "keyVaultResourceGroup": {
+      "type": "string",
+      "metadata": {
+        "description": "Resource group of the KeyVault"
+      }
+    },
+    "keyEncryptionKeyURL": {
+      "type": "string",
+      "metadata": {
+        "description": "URL of the KeyEncryptionKey used to encrypt the volume encryption key"
+      }
+    },
+    "keyVaultResourceID": {
+      "type": "string",
+      "metadata": {
+        "description": "ID for the keyvault"
+      }
+    },
+    "keyVaultSecretUrl": {
+      "type": "string",
+      "metadata": {
+        "description": "URL to the secret for encryption"
+      }
+    },
+    "volumeType": {
+      "allowedValues": [
+        "OS",
+        "Data",
+        "All"
+      ],
+      "type": "string",
+      "metadata": {
+        "description": "Type of the volume OS or Data to perform encryption operation"
+      }
+    },
+    "sequenceVersion": {
+      "defaultValue": "1.0",
+      "type": "string",
+      "metadata": {
+        "description": "Pass in an unique value like a GUID everytime the operation needs to be force run"
+      }
+    },
     "tags": {
       "type": "object",
       "metadata": {
@@ -461,68 +461,68 @@
             }
           }
         },
-				{
-					"dependsOn": [
-						"[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
-						"[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
-					],
-					"type": "Microsoft.Compute/virtualMachines/extensions",
-					"name": "[concat(parameters('vmName'),'/', 'AzureDiskEncryptionForLinux')]",
-					"apiVersion": "2016-04-30-preview",
-					"location": "[resourceGroup().location]",
-					"properties": {
-						"publisher": "Microsoft.Azure.Security",
-						"type": "AzureDiskEncryptionForLinux",
-						"typeHandlerVersion": "0.1",
-						"autoUpgradeMinorVersion": true,
-						"forceUpdateTag": "[parameters('sequenceVersion')]",
-						"settings": {
-							"AADClientID": "[parameters('aadClientID')]",
-							"KeyVaultURL": "[variables('keyVaultURL')]",
-							"KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
-							"KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
-							"VolumeType": "[parameters('volumeType')]",
-							"EncryptionOperation": "EnableEncryption"
-						},
-						"protectedSettings": {
-							"AADClientSecret": "[parameters('aadClientSecret')]"
-						}
-					}
-				}
+        {
+          "dependsOn": [
+            "[concat('Microsoft.Compute/virtualMachines/', parameters('vmName'))]",
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'OMSExtension')]"
+          ],
+          "type": "Microsoft.Compute/virtualMachines/extensions",
+          "name": "[concat(parameters('vmName'),'/', 'AzureDiskEncryptionForLinux')]",
+          "apiVersion": "2016-04-30-preview",
+          "location": "[resourceGroup().location]",
+          "properties": {
+            "publisher": "Microsoft.Azure.Security",
+            "type": "AzureDiskEncryptionForLinux",
+            "typeHandlerVersion": "0.1",
+            "autoUpgradeMinorVersion": true,
+            "forceUpdateTag": "[parameters('sequenceVersion')]",
+            "settings": {
+              "AADClientID": "[parameters('aadClientID')]",
+              "KeyVaultURL": "[variables('keyVaultURL')]",
+              "KeyEncryptionKeyURL": "[parameters('keyEncryptionKeyURL')]",
+              "KeyEncryptionAlgorithm": "[variables('keyEncryptionAlgorithm')]",
+              "VolumeType": "[parameters('volumeType')]",
+              "EncryptionOperation": "EnableEncryption"
+            },
+            "protectedSettings": {
+              "AADClientSecret": "[parameters('aadClientSecret')]"
+            }
+          }
+        }
       ]
     },
-		{
-			"name": "[concat(parameters('vmName'),'.updatevm')]",
-			"type": "Microsoft.Resources/deployments",
-			"apiVersion": "2015-01-01",
-			"dependsOn": [
-				"[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryptionForLinux')]"
-			],
-			"properties": {
-				"mode": "Incremental",
-				"templateLink": {
-					"uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
-					"contentVersion": "1.0.0.0"
-				},
-				"parameters": {
-					"vmName": {
-						"value": "[parameters('vmName')]"
-					},
-					"vmLocation": {
-						"value": "[parameters('vmLocation')]"
-					},
-					"keyVaultResourceID": {
-						"value": "[variables('keyVaultResourceID')]"
-					},
-					"keyVaultSecretUrl": {
-						"value": "[parameters('keyVaultSecretUrl')]"
-					},
-					"keyEncryptionKeyURL": {
-						"value": "[parameters('keyEncryptionKeyURL')]"
-					}
-				}
-			}
-		},
+    {
+      "name": "[concat(parameters('vmName'),'.updatevm')]",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2015-01-01",
+      "dependsOn": [
+        "[resourceId('Microsoft.Compute/virtualMachines/extensions',  parameters('vmName'), 'AzureDiskEncryptionForLinux')]"
+      ],
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateVMEncryption.json",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('vmName')]"
+          },
+          "vmLocation": {
+            "value": "[parameters('vmLocation')]"
+          },
+          "keyVaultResourceID": {
+            "value": "[variables('keyVaultResourceID')]"
+          },
+          "keyVaultSecretUrl": {
+            "value": "[parameters('keyVaultSecretUrl')]"
+          },
+          "keyEncryptionKeyURL": {
+            "value": "[parameters('keyEncryptionKeyURL')]"
+          }
+        }
+      }
+    },
     {
       "dependsOn": [
         "[resourceId('Microsoft.Compute/virtualMachines/', parameters('vmName'))]"
@@ -554,9 +554,6 @@
           },
           "Environment": {
             "value": "[parameters('tags').Environment]"
-          },
-          "AvailabilityPattern": {
-            "value": "[parameters('tags').AvailabilityPattern]"
           }
         }
       }

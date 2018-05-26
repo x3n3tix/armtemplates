@@ -188,8 +188,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://nzaccgit.blob.core.windows.net/templates/Prod/WindowsVM', if(not(empty(parameters('virtualMachines')[copyIndex()]['DataDisks'])), 'DataDisks', ''),'.json',parameters('storageSASToken'))]",
-          "contentVersion": "1.0.0.0"
+          "uri": "[concat('https://nzaccgit.blob.core.windows.net/templates/Prod/WindowsVM', if(greater(length(parameters('virtualMachines')[copyIndex()].DataDisks),0), 'DataDisks', ''), 'DataDisks', ''),'.json',parameters('storageSASToken'))]",          "contentVersion": "1.0.0.0"
         },
         "parameters": {
           "vmName": {

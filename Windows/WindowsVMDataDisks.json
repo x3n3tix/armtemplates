@@ -581,6 +581,9 @@
           },
           "Environment": {
             "value": "[parameters('tags').Environment]"
+          },
+          "AvailabilityPattern": {
+            "value": "[parameters('tags').AvailabilityPattern]"
           }
         }
       }
