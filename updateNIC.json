@@ -19,6 +19,9 @@
     },
     "Environment": {
       "type": "string"
+    },
+    "AvailabilityPattern": {
+      "type": "string"
     }
   },
   "resources": [
@@ -32,7 +35,8 @@
       "tags": {
         "BillingIdentifier": "[parameters('BillingIdentifier')]",
         "BusinessService": "[parameters('BusinessService')]",
-        "Environment": "[parameters('Environment')]"
+        "Environment": "[parameters('Environment')]",
+        "AvailabilityPattern": "[parameters('AvailabilityPattern')]"
       },
       "properties": {
         "ipConfigurations": [
