@@ -533,7 +533,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "https://raw.githubusercontent.com/x3n3tix/armtemplates/master/updateNIC.json",
+          "uri": "[concat('https://nzaccgit.blob.core.windows.net/templates/updateNIC.json',parameters('storageSASToken')]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
