@@ -437,7 +437,7 @@
       "properties": {
         "mode": "Incremental",
         "templateLink": {
-          "uri": "[concat('https://nzaccgit.blob.core.windows.net/templates/updateNIC.json',parameters('storageSASToken')]",
+          "uri": "[concat('https://nzaccgit.blob.core.windows.net/templates/updateNIC.json',parameters('storageSASToken'))]",
           "contentVersion": "1.0.0.0"
         },
         "parameters": {
